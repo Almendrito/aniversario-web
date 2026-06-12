@@ -559,6 +559,161 @@
     content: "_";
     animation: cursor 1.1s steps(1) infinite;
   }
+
+  /* ---------- Carta clasificada ---------- */
+  .carta-zona {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.2rem;
+  }
+
+  .sobre {
+    width: min(250px, 70vw);
+    cursor: pointer;
+    transition: transform 0.3s;
+    text-align: center;
+  }
+
+  .sobre:hover { transform: translateY(-5px); }
+  .sobre.abierto { cursor: default; }
+  .sobre.abierto:hover { transform: none; }
+
+  .sobre-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    overflow: visible;
+  }
+
+  .sobre .flap {
+    transform-box: view-box;
+    transform-origin: 120px 6px;
+    transition: transform 0.7s ease;
+  }
+
+  .sobre.abierto .flap { transform: scaleY(-1); }
+
+  .sobre .sello {
+    transform-box: view-box;
+    transform-origin: 120px 88px;
+    transition: transform 0.45s ease, opacity 0.45s ease;
+  }
+
+  .sobre.abierto .sello { transform: scale(1.7); opacity: 0; }
+
+  .sobre-hint {
+    margin-top: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.3em;
+    color: var(--texto-suave);
+  }
+
+  .sobre.abierto .sobre-hint { visibility: hidden; }
+
+  .clave-panel { text-align: center; }
+
+  .clave-prompt {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--verde);
+    margin-bottom: 1.1rem;
+  }
+
+  .clave-fila {
+    display: flex;
+    gap: 0.7rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .clave-input {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--espacio-2);
+    border: 1px solid var(--borde);
+    color: var(--texto);
+    padding: 0.8rem 1rem;
+    border-radius: 10px;
+    letter-spacing: 0.35em;
+    text-align: center;
+    width: 210px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+
+  .clave-input:focus { border-color: rgba(77, 216, 255, 0.55); }
+
+  .clave-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    background: var(--ambar);
+    color: #0b0f1a;
+    border: none;
+    border-radius: 10px;
+    padding: 0.8rem 1.4rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.3s;
+  }
+
+  .clave-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 22px rgba(217, 142, 50, 0.35);
+  }
+
+  .clave-error {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: #e2697a;
+    margin-top: 0.9rem;
+    min-height: 1.1em;
+  }
+
+  @keyframes tiembla {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-8px); }
+    40%, 80% { transform: translateX(8px); }
+  }
+
+  .tiembla { animation: tiembla 0.4s ease; }
+
+  .carta-papel {
+    max-width: 620px;
+    width: 100%;
+    background: var(--panel);
+    border: 1px solid rgba(217, 142, 50, 0.35);
+    border-radius: 16px;
+    padding: 2.4rem 2rem;
+    backdrop-filter: blur(6px);
+    text-align: left;
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+
+  .carta-papel.desplegada { opacity: 1; transform: none; }
+
+  .carta-cabecera {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
+    color: var(--ambar);
+    margin-bottom: 1.6rem;
+  }
+
+  .carta-papel p {
+    line-height: 1.9;
+    margin-bottom: 1.1rem;
+  }
+
+  .carta-firma {
+    text-align: right;
+    color: var(--cian);
+    font-weight: 600;
+    margin-top: 1.8rem;
+  }
 </style>
 </head>
 <body>
@@ -699,7 +854,56 @@
     <p class="firma">&mdash; Machape</p>
   </section>
 
-  <footer>BANDA SONORA SUGERIDA: LA VIE EN ROSE</footer>
+  <!-- ============ CARTA ============ -->
+  <section id="carta" class="aparece">
+    <div class="encabezado">
+      <span class="etiqueta-seccion">Correspondencia clasificada</span>
+      <h2 class="titulo-seccion">Hay una carta para ti</h2>
+    </div>
+    <div class="carta-zona">
+
+      <div class="sobre" id="sobre" title="Abrir la carta">
+        <svg class="sobre-svg" viewBox="0 0 240 150">
+          <rect x="4" y="4" width="232" height="142" rx="10" fill="#111726" stroke="rgba(217,142,50,0.55)" stroke-width="2"/>
+          <path d="M 14 146 L 120 76 L 226 146" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+          <g class="flap">
+            <path d="M 6 8 L 120 90 L 234 8 Q 230 4 224 4 L 16 4 Q 10 4 6 8 Z" fill="#1a2336" stroke="rgba(217,142,50,0.55)" stroke-width="2"/>
+          </g>
+          <g class="sello">
+            <circle cx="120" cy="88" r="17" fill="#0b0f1a" stroke="rgba(217,142,50,0.8)" stroke-width="2"/>
+            <path d="M120 97 C 110 89 108 81 114 78 C 117 77 120 79 120 82 C 120 79 123 77 126 78 C 132 81 130 89 120 97 Z" fill="#d98e32"/>
+          </g>
+        </svg>
+        <p class="sobre-hint">TOCA PARA ABRIR</p>
+      </div>
+
+      <div class="clave-panel" id="clavePanel" hidden>
+        <p class="clave-prompt">&gt; archivo protegido &middot; introduce la clave</p>
+        <div class="clave-fila">
+          <input type="password" id="claveInput" class="clave-input" maxlength="30" autocomplete="off" placeholder="********">
+          <button class="clave-btn" id="claveBtn">ABRIR</button>
+        </div>
+        <p class="clave-error" id="claveError"></p>
+      </div>
+
+      <article class="carta-papel" id="cartaPapel" hidden>
+        <p class="carta-cabecera">DE: MATEO &middot; PARA: AYLEEN</p>
+        <!-- EDITA AQUI (5/5): tu carta. Cada <p> es un parrafo;
+             copia mas lineas <p>...</p> si necesitas mas. -->
+        <p>Ayleen:</p>
+        <p>
+          Escribe aqui las palabras que quieres dejarle. Este texto
+          es solo de ejemplo para que veas como se ve la carta.
+        </p>
+        <p>
+          Puedes contarle lo que significan estos meses, lo que
+          esperas de los que vienen, o eso que nunca le has dicho.
+        </p>
+        <p class="carta-firma">&mdash; Mateo</p>
+      </article>
+
+    </div>
+  </section>
 
 </main>
 
@@ -721,18 +925,23 @@ const FECHA_INICIO = new Date(2025, 11 - 1, 14);
 // con estos nombres (o cambia los nombres aqui) y escribe el
 // pie de foto que quieras para cada una.
 const FOTOS = [
-  { src: "fotos/1.jpg", pie: "Donde todo empezo" },
-  { src: "fotos/2.jpg", pie: "Nuestra primera salida" },
-  { src: "fotos/3.jpg", pie: "Ese viaje" },
-  { src: "fotos/4.jpg", pie: "Un dia cualquiera, feliz" },
-  { src: "fotos/5.jpg", pie: "Tu risa favorita" },
-  { src: "fotos/6.jpg", pie: "Y los que vienen..." },
+  { src: "fotos/1.jpeg", pie: "Donde todo empezo" },
+  { src: "fotos/2.jpeg", pie: "Nuestra primera salida" },
+  { src: "fotos/3.jpeg", pie: "Ese viaje" },
+  { src: "fotos/4.jpeg", pie: "Un dia cualquiera, feliz" },
+  { src: "fotos/5.jpeg", pie: "Tu risa favorita" },
+  { src: "fotos/6.jpeg", pie: "Y los que vienen..." },
 ];
 
 // Cancion de fondo. Guarda el archivo mp3 en la carpeta "musica/"
 // con este nombre (o cambia el nombre aqui). Volumen entre 0 y 1.
 const MUSICA = "musica/cancion.mp3";
 const VOLUMEN = 0.6;
+
+// Clave para abrir la carta del final (no distingue mayusculas)
+// y pista que aparece despues de 3 intentos fallidos.
+const CLAVE = "wall-e";
+const PISTA = "pista: el robot que soy yo";
 
 /* ==========================================================
    De aqui hacia abajo no hace falta tocar nada
@@ -967,6 +1176,53 @@ btnSi.addEventListener("click", (ev) => {
     document.body.style.overflow = "";
     setTimeout(() => intro.remove(), 1000);
   }, 700);
+});
+
+// ----- Carta clasificada -----
+const sobre = document.getElementById("sobre");
+const clavePanel = document.getElementById("clavePanel");
+const claveInput = document.getElementById("claveInput");
+const claveBtn = document.getElementById("claveBtn");
+const claveError = document.getElementById("claveError");
+const cartaPapel = document.getElementById("cartaPapel");
+let cartaAbierta = false;
+let intentosClave = 0;
+
+sobre.addEventListener("click", () => {
+  if (cartaAbierta) return;
+  clavePanel.hidden = false;
+  clavePanel.scrollIntoView({ behavior: "smooth", block: "center" });
+  claveInput.focus({ preventScroll: true });
+});
+
+function probarClave() {
+  const intento = claveInput.value.trim().toLowerCase();
+  if (intento === CLAVE.toLowerCase()) {
+    cartaAbierta = true;
+    claveError.textContent = "";
+    clavePanel.hidden = true;
+    sobre.classList.add("abierto");
+    const r = sobre.getBoundingClientRect();
+    estallido(r.left + r.width / 2, r.top + r.height / 3, 22);
+    setTimeout(() => {
+      cartaPapel.hidden = false;
+      requestAnimationFrame(() => cartaPapel.classList.add("desplegada"));
+      cartaPapel.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 650);
+  } else {
+    intentosClave++;
+    claveInput.value = "";
+    claveInput.classList.remove("tiembla");
+    void claveInput.offsetWidth; // reinicia la animacion de temblor
+    claveInput.classList.add("tiembla");
+    claveError.textContent = "> clave incorrecta" +
+      (intentosClave >= 3 && PISTA ? " · " + PISTA : "");
+  }
+}
+
+claveBtn.addEventListener("click", probarClave);
+claveInput.addEventListener("keydown", (ev) => {
+  if (ev.key === "Enter") probarClave();
 });
 </script>
 
