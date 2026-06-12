@@ -515,17 +515,30 @@
 
       <!-- EVA -->
       <div class="robot-col">
-        <svg class="flota-b robot-click" viewBox="0 0 100 140" aria-label="EVA">
-          <ellipse cx="50" cy="30" rx="24" ry="19" fill="#eef2f7"/>
-          <ellipse cx="50" cy="32" rx="16" ry="11" fill="#10141f"/>
-          <!-- Ojos: esquina exterior hacia arriba, con halo de luz -->
-          <ellipse cx="43" cy="31" rx="5.6" ry="3.4" fill="#4dd8ff" opacity="0.3" transform="rotate(18 43 31)"/>
-          <ellipse cx="57" cy="31" rx="5.6" ry="3.4" fill="#4dd8ff" opacity="0.3" transform="rotate(-18 57 31)"/>
-          <ellipse cx="43" cy="31" rx="4.5" ry="2.6" fill="#6fe0ff" transform="rotate(18 43 31)"/>
-          <ellipse cx="57" cy="31" rx="4.5" ry="2.6" fill="#6fe0ff" transform="rotate(-18 57 31)"/>
-          <ellipse cx="50" cy="90" rx="30" ry="42" fill="#eef2f7"/>
-          <ellipse cx="13" cy="85" rx="6" ry="20" fill="#dde4ec" transform="rotate(8 13 85)"/>
-          <ellipse cx="87" cy="85" rx="6" ry="20" fill="#dde4ec" transform="rotate(-8 87 85)"/>
+        <svg class="flota-b robot-click" viewBox="0 0 100 150" aria-label="EVA">
+          <defs>
+            <radialGradient id="ojoEva" cx="50%" cy="45%" r="60%">
+              <stop offset="0%" stop-color="#bfe9ff"/>
+              <stop offset="45%" stop-color="#4dafff"/>
+              <stop offset="100%" stop-color="#1565d8"/>
+            </radialGradient>
+          </defs>
+          <!-- Cabeza: domo redondeado -->
+          <path d="M 26 30 C 26 13 36 5 50 5 C 64 5 74 13 74 30 C 74 38 64 43 50 43 C 36 43 26 38 26 30 Z" fill="#eef2f7"/>
+          <!-- Visor negro grande -->
+          <path d="M 32 28 C 32 15 40 10 50 10 C 60 10 68 15 68 28 C 68 35 60 39 50 39 C 40 39 32 35 32 28 Z" fill="#0b0e16"/>
+          <!-- Ojos: ovalos azules grandes con centro brillante -->
+          <ellipse cx="42" cy="25" rx="7.6" ry="5.4" fill="#4dafff" opacity="0.25" transform="rotate(6 42 25)"/>
+          <ellipse cx="58" cy="25" rx="7.6" ry="5.4" fill="#4dafff" opacity="0.25" transform="rotate(-6 58 25)"/>
+          <ellipse cx="42" cy="25" rx="6.4" ry="4.4" fill="url(#ojoEva)" transform="rotate(6 42 25)"/>
+          <ellipse cx="58" cy="25" rx="6.4" ry="4.4" fill="url(#ojoEva)" transform="rotate(-6 58 25)"/>
+          <!-- Cuerpo: gota invertida, ancho arriba y en punta abajo -->
+          <path d="M 50 50 C 68 50 78 58 78 74 C 78 100 66 128 50 138 C 34 128 22 100 22 74 C 22 58 32 50 50 50 Z" fill="#eef2f7"/>
+          <!-- Linea del pecho en V suave -->
+          <path d="M 27 62 C 39 64 46 68 50 71 C 54 68 61 64 73 62" stroke="#dde3eb" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <!-- Brazos: aspas delgadas que terminan en punta -->
+          <path d="M 14 52 C 9 62 7 84 11 106 C 12 112 14 117 16 120 C 18 110 19 88 18 66 C 18 58 16 53 14 52 Z" fill="#e6ecf3"/>
+          <path d="M 86 52 C 91 62 93 84 89 106 C 88 112 86 117 84 120 C 82 110 81 88 82 66 C 82 58 84 53 86 52 Z" fill="#e6ecf3"/>
         </svg>
         <!-- EDITA AQUI (1/3): el nombre de quien es EVA -->
         <div class="nombre lado-eva">Ayleen</div>
