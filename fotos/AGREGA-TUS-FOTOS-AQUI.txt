@@ -1,0 +1,14 @@
+Guarda aqui las fotos de la galeria con estos nombres:
+
+  1.jpg
+  2.jpg
+  3.jpg
+  4.jpg
+  5.jpg
+  6.jpg
+
+Consejos:
+- Sirven .jpg o .png (si usas .png, cambia la extension en index.html, en la lista FOTOS).
+- Idealmente fotos cuadradas o casi cuadradas; el marco las recorta al centro automaticamente.
+- Comprime las fotos antes de subirlas (menos de 1 MB cada una) para que la pagina cargue rapido en el celular. Puedes usar https://squoosh.app
+- Puedes agregar mas fotos: copia una linea mas en la lista FOTOS de index.html.
