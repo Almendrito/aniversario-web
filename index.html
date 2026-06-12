@@ -3,20 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>14 meses juntos</title>
-<meta name="description" content="Un regalo para celebrar nuestros 14 meses">
+<title>Directiva: 14 meses</title>
+<meta name="description" content="Dos robots distintos, una misma directiva">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --crema: #fff8f3;
-    --rosa-claro: #fbe4ea;
-    --rosa: #f3c1cf;
-    --rosa-fuerte: #c2526e;
-    --vino: #8e3a52;
-    --texto: #5a3d44;
-    --blanco: #ffffff;
+    --espacio: #0b0f1a;
+    --espacio-2: #111726;
+    --panel: rgba(255, 255, 255, 0.04);
+    --borde: rgba(255, 255, 255, 0.10);
+    --texto: #e8ecf1;
+    --texto-suave: #9aa3b2;
+    --cian: #4dd8ff;          /* EVA */
+    --ambar: #d98e32;         /* WALL-E */
+    --verde: #58c472;         /* la planta */
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -24,14 +26,16 @@
   html { scroll-behavior: smooth; }
 
   body {
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     color: var(--texto);
-    background: linear-gradient(180deg, var(--crema) 0%, var(--rosa-claro) 50%, var(--crema) 100%);
+    background: radial-gradient(ellipse at 50% -20%, #1a2336 0%, var(--espacio) 55%);
     overflow-x: hidden;
   }
 
-  /* ---------- Corazones flotantes de fondo ---------- */
-  .hearts-bg {
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* ---------- Cielo: estrellas y fugaces ---------- */
+  .cielo {
     position: fixed;
     inset: 0;
     pointer-events: none;
@@ -39,20 +43,31 @@
     overflow: hidden;
   }
 
-  .heart-float {
+  .estrella {
     position: absolute;
-    bottom: -40px;
-    color: var(--rosa);
-    opacity: 0;
-    animation: subir linear infinite;
-    user-select: none;
+    border-radius: 50%;
+    background: #fff;
+    animation: titilar var(--d, 4s) ease-in-out infinite;
   }
 
-  @keyframes subir {
-    0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
-    10%  { opacity: 0.7; }
-    90%  { opacity: 0.4; }
-    100% { transform: translateY(-110vh) rotate(25deg); opacity: 0; }
+  @keyframes titilar {
+    0%, 100% { opacity: 0.15; }
+    50%      { opacity: var(--brillo, 0.9); }
+  }
+
+  .fugaz {
+    position: absolute;
+    width: 130px;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.9), transparent);
+    border-radius: 2px;
+    transform: rotate(140deg);
+    animation: caer 1.4s ease-out forwards;
+  }
+
+  @keyframes caer {
+    0%   { transform: rotate(140deg) translateX(0); opacity: 1; }
+    100% { transform: rotate(140deg) translateX(70vh); opacity: 0; }
   }
 
   main { position: relative; z-index: 1; }
@@ -65,55 +80,107 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 2rem 1.5rem;
+    padding: 3rem 1.5rem;
+    position: relative;
   }
 
-  .hero .fecha-chip {
-    font-size: 0.85rem;
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    color: var(--rosa-fuerte);
-    border: 1px solid var(--rosa);
+  .chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.3em;
+    color: var(--texto-suave);
+    border: 1px solid var(--borde);
     border-radius: 999px;
-    padding: 0.5rem 1.4rem;
-    margin-bottom: 2.5rem;
-    background: rgba(255, 255, 255, 0.6);
+    padding: 0.55rem 1.3rem;
+    margin-bottom: 3.5rem;
+    background: var(--panel);
+    backdrop-filter: blur(6px);
   }
 
-  .nombres {
-    font-family: 'Great Vibes', cursive;
-    font-size: clamp(3rem, 10vw, 6rem);
-    line-height: 1.15;
-    color: var(--vino);
-    display: flex;
-    align-items: center;
-    gap: clamp(0.8rem, 3vw, 1.6rem);
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .corazon-latiendo {
+  .chip .punto {
     display: inline-block;
-    font-size: clamp(2rem, 6vw, 3.5rem);
-    color: var(--rosa-fuerte);
-    animation: latir 1.3s ease-in-out infinite;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--verde);
+    margin-right: 0.7em;
+    vertical-align: 1px;
+    animation: pulso 2s ease-in-out infinite;
+  }
+
+  @keyframes pulso {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(88, 196, 114, 0.5); }
+    50%      { box-shadow: 0 0 0 6px rgba(88, 196, 114, 0); }
+  }
+
+  .robots {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: clamp(0.5rem, 4vw, 2rem);
+  }
+
+  .robot-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+  }
+
+  .robot-col svg {
+    width: clamp(90px, 20vw, 150px);
+    height: auto;
     cursor: pointer;
-    transition: transform 0.2s;
   }
 
-  @keyframes latir {
-    0%, 100% { transform: scale(1); }
-    25% { transform: scale(1.25); }
-    40% { transform: scale(1); }
-    60% { transform: scale(1.18); }
+  .flota-a { animation: flotar 4.5s ease-in-out infinite; }
+  .flota-b { animation: flotar 5.2s ease-in-out 0.8s infinite; }
+
+  @keyframes flotar {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-12px); }
   }
 
-  .hero .subtitulo {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: clamp(1.2rem, 4vw, 1.7rem);
-    margin-top: 1.5rem;
-    color: var(--texto);
+  /* EDITA AQUI: los nombres se ven con este estilo */
+  .nombre {
+    font-size: clamp(1.4rem, 4.5vw, 2.2rem);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .nombre.lado-walle { color: var(--ambar); }
+  .nombre.lado-eva   { color: var(--cian); }
+
+  .trayecto {
+    width: clamp(60px, 14vw, 170px);
+    margin-bottom: 4.5rem;
+    overflow: visible;
+  }
+
+  .trayecto path {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.45);
+    stroke-width: 2;
+    stroke-dasharray: 2 9;
+    stroke-linecap: round;
+    animation: avanzar 3s linear infinite;
+  }
+
+  @keyframes avanzar {
+    to { stroke-dashoffset: -44; }
+  }
+
+  .hero h1 {
+    margin-top: 3rem;
+    font-size: clamp(1.6rem, 5vw, 2.6rem);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .hero .lema {
+    margin-top: 0.9rem;
+    color: var(--texto-suave);
+    font-size: clamp(0.95rem, 2.6vw, 1.1rem);
+    font-weight: 400;
   }
 
   .scroll-hint {
@@ -121,43 +188,37 @@
     bottom: 2rem;
     left: 50%;
     transform: translateX(-50%);
-    color: var(--rosa-fuerte);
-    font-size: 1.5rem;
-    animation: rebotar 2s ease-in-out infinite;
+    color: var(--texto-suave);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
     text-decoration: none;
+    animation: rebotar 2.2s ease-in-out infinite;
   }
 
   @keyframes rebotar {
     0%, 100% { transform: translateX(-50%) translateY(0); }
-    50% { transform: translateX(-50%) translateY(10px); }
+    50%      { transform: translateX(-50%) translateY(8px); }
   }
 
   /* ---------- Secciones ---------- */
-  section { padding: 5rem 1.5rem; position: relative; }
+  section { padding: 5.5rem 1.5rem; }
 
-  .titulo-seccion {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 600;
-    font-size: clamp(2rem, 6vw, 3rem);
-    text-align: center;
-    color: var(--vino);
+  .encabezado { text-align: center; margin-bottom: 3rem; }
+
+  .etiqueta-seccion {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.35em;
+    color: var(--texto-suave);
+    text-transform: uppercase;
+    display: block;
     margin-bottom: 0.8rem;
   }
 
-  .divisor {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.8rem;
-    margin-bottom: 3rem;
-    color: var(--rosa-fuerte);
-  }
-
-  .divisor::before, .divisor::after {
-    content: "";
-    width: 70px;
-    height: 1px;
-    background: var(--rosa);
+  .titulo-seccion {
+    font-size: clamp(1.7rem, 5vw, 2.5rem);
+    font-weight: 700;
   }
 
   /* ---------- Contador ---------- */
@@ -165,186 +226,261 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 1rem;
-    max-width: 900px;
+    gap: 0.9rem;
+    max-width: 920px;
     margin: 0 auto;
   }
 
-  .contador .unidad {
-    background: var(--blanco);
-    border-radius: 18px;
-    box-shadow: 0 8px 30px rgba(194, 82, 110, 0.12);
-    padding: 1.6rem 1rem;
-    min-width: 130px;
-    flex: 1 1 130px;
+  .unidad {
+    background: var(--panel);
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    padding: 1.5rem 1rem 1.2rem;
+    min-width: 125px;
+    flex: 1 1 125px;
     max-width: 160px;
     text-align: center;
-    border: 1px solid var(--rosa-claro);
+    backdrop-filter: blur(6px);
+    transition: border-color 0.3s, transform 0.3s;
   }
 
-  .contador .numero {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 600;
-    font-size: clamp(2.2rem, 6vw, 3.2rem);
-    color: var(--rosa-fuerte);
-    line-height: 1;
+  .unidad:hover {
+    border-color: rgba(77, 216, 255, 0.45);
+    transform: translateY(-4px);
+  }
+
+  .numero {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: clamp(2rem, 5.5vw, 2.9rem);
+    line-height: 1.1;
     font-variant-numeric: tabular-nums;
+    background: linear-gradient(180deg, #ffffff, #9fd9ef);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 
-  .contador .etiqueta {
+  .etiqueta {
     margin-top: 0.5rem;
-    font-size: 0.8rem;
-    letter-spacing: 0.15em;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
     text-transform: uppercase;
-    color: var(--texto);
+    color: var(--texto-suave);
   }
 
-  .frase-contador {
+  .consola {
     text-align: center;
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 1.25rem;
-    margin-top: 2.5rem;
-    color: var(--texto);
+    margin-top: 2.6rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--verde);
   }
+
+  .consola::after {
+    content: "_";
+    animation: cursor 1.1s steps(1) infinite;
+  }
+
+  @keyframes cursor { 50% { opacity: 0; } }
 
   /* ---------- Galeria ---------- */
   .galeria {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 2.2rem;
-    max-width: 1000px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.4rem;
+    max-width: 1020px;
     margin: 0 auto;
   }
 
-  .polaroid {
-    background: var(--blanco);
-    padding: 0.9rem 0.9rem 1rem;
-    border-radius: 6px;
-    box-shadow: 0 10px 28px rgba(90, 61, 68, 0.16);
-    transform: rotate(var(--giro, -2deg));
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  .polaroid:nth-child(even) { --giro: 2deg; }
-
-  .polaroid:hover {
-    transform: rotate(0deg) translateY(-8px) scale(1.03);
-    box-shadow: 0 18px 40px rgba(90, 61, 68, 0.24);
-    z-index: 2;
-  }
-
-  .polaroid .marco {
-    aspect-ratio: 1 / 1;
+  .archivo {
+    background: var(--espacio-2);
+    border: 1px solid var(--borde);
+    border-radius: 14px;
     overflow: hidden;
-    border-radius: 3px;
-    background: linear-gradient(135deg, var(--rosa-claro), var(--rosa));
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .archivo:hover {
+    transform: translateY(-6px);
+    border-color: rgba(217, 142, 50, 0.5);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+  }
+
+  .archivo .marco {
+    aspect-ratio: 1 / 1;
+    background: linear-gradient(135deg, #161d2e, #0e1320);
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
   }
 
-  .polaroid img {
+  .archivo img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
   }
 
-  .polaroid .sin-foto {
+  .sin-foto {
     text-align: center;
-    color: var(--vino);
-    font-size: 0.85rem;
+    color: var(--texto-suave);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    line-height: 1.8;
     padding: 1rem;
-    line-height: 1.6;
   }
 
-  .polaroid .sin-foto .corazon-ph {
-    font-size: 2.2rem;
+  .sin-foto .brote { font-size: 1.8rem; display: block; margin-bottom: 0.4rem; }
+
+  .archivo .info {
+    padding: 0.9rem 1.1rem 1.1rem;
+    border-top: 1px solid var(--borde);
+  }
+
+  .archivo .codigo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    color: var(--ambar);
     display: block;
-    margin-bottom: 0.4rem;
-    color: var(--rosa-fuerte);
+    margin-bottom: 0.3rem;
   }
 
-  .polaroid figcaption {
-    font-family: 'Great Vibes', cursive;
-    font-size: 1.4rem;
-    text-align: center;
-    margin-top: 0.7rem;
-    color: var(--texto);
+  .archivo .pie {
+    font-size: 0.95rem;
+    font-weight: 500;
   }
 
   /* ---------- Cierre ---------- */
   .cierre {
     text-align: center;
-    padding-bottom: 6rem;
+    padding-bottom: 5rem;
   }
 
+  .cierre .planta { width: 90px; height: auto; margin-bottom: 2rem; }
+
   .cierre .mensaje {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: clamp(1.3rem, 4vw, 1.8rem);
-    max-width: 600px;
-    margin: 0 auto 2.5rem;
-    line-height: 1.7;
+    max-width: 560px;
+    margin: 0 auto 2.2rem;
+    font-size: clamp(1.05rem, 3vw, 1.3rem);
+    font-weight: 400;
+    line-height: 1.8;
+    color: var(--texto);
   }
 
   .firma {
-    font-family: 'Great Vibes', cursive;
-    font-size: 2.2rem;
-    color: var(--vino);
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--cian);
   }
 
-  /* ---------- Animacion de aparicion ---------- */
+  footer {
+    text-align: center;
+    padding: 0 1.5rem 3rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.22em;
+    color: var(--texto-suave);
+  }
+
+  /* ---------- Aparicion al hacer scroll ---------- */
   .aparece {
     opacity: 0;
     transform: translateY(35px);
     transition: opacity 0.9s ease, transform 0.9s ease;
   }
 
-  .aparece.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  .aparece.visible { opacity: 1; transform: translateY(0); }
 
-  /* ---------- Corazones al hacer clic ---------- */
-  .mini-corazon {
+  /* ---------- Chispas al tocar un robot ---------- */
+  .chispa {
     position: fixed;
+    width: 6px; height: 6px;
+    border-radius: 50%;
     pointer-events: none;
-    color: var(--rosa-fuerte);
     z-index: 10;
-    animation: estallar 1.1s ease-out forwards;
+    animation: estallar 0.9s ease-out forwards;
   }
 
   @keyframes estallar {
-    0%   { transform: translate(0, 0) scale(0.6); opacity: 1; }
-    100% { transform: translate(var(--dx), var(--dy)) scale(1.4); opacity: 0; }
+    0%   { transform: translate(0, 0) scale(1); opacity: 1; }
+    100% { transform: translate(var(--dx), var(--dy)) scale(0.3); opacity: 0; }
   }
 </style>
 </head>
 <body>
 
-<div class="hearts-bg" id="heartsBg"></div>
+<div class="cielo" id="cielo"></div>
 
 <main>
 
   <!-- ============ PORTADA ============ -->
   <header class="hero">
-    <div class="fecha-chip">14 &middot; 07 &middot; 2026</div>
-    <h1 class="nombres">
-      <!-- EDITA AQUI (1/3): cambia los nombres -->
-      <span>Tu nombre</span>
-      <span class="corazon-latiendo" id="corazonHero">&hearts;</span>
-      <span>Su nombre</span>
-    </h1>
-    <p class="subtitulo">14 meses caminando juntos, y los que faltan</p>
-    <a class="scroll-hint" href="#contador" aria-label="Bajar">&#8595;</a>
+    <div class="chip"><span class="punto"></span>AXIOM &middot; REGISTRO 14 &middot; 14.07.2026</div>
+
+    <div class="robots">
+      <!-- WALL-E -->
+      <div class="robot-col">
+        <svg class="flota-a robot-click" viewBox="0 0 120 130" aria-label="WALL-E">
+          <rect x="30" y="18" width="28" height="24" rx="12" fill="#9aa0ab"/>
+          <rect x="62" y="18" width="28" height="24" rx="12" fill="#9aa0ab"/>
+          <circle cx="44" cy="30" r="7" fill="#10141f"/>
+          <circle cx="76" cy="30" r="7" fill="#10141f"/>
+          <circle cx="46" cy="28" r="2" fill="#cfd6e0"/>
+          <circle cx="78" cy="28" r="2" fill="#cfd6e0"/>
+          <rect x="56" y="40" width="8" height="17" fill="#7d828c"/>
+          <rect x="20" y="55" width="80" height="52" rx="8" fill="#d98e32"/>
+          <rect x="44" y="68" width="32" height="16" rx="3" fill="#2b313d"/>
+          <circle cx="52" cy="76" r="3" fill="#58c472"/>
+          <rect x="8" y="62" width="12" height="32" rx="5" fill="#a8742f"/>
+          <rect x="100" y="62" width="12" height="32" rx="5" fill="#a8742f"/>
+          <rect x="14" y="103" width="40" height="22" rx="11" fill="#3a3f4a"/>
+          <rect x="66" y="103" width="40" height="22" rx="11" fill="#3a3f4a"/>
+          <circle cx="28" cy="114" r="4" fill="#10141f"/>
+          <circle cx="44" cy="114" r="4" fill="#10141f"/>
+          <circle cx="80" cy="114" r="4" fill="#10141f"/>
+          <circle cx="96" cy="114" r="4" fill="#10141f"/>
+        </svg>
+        <!-- EDITA AQUI (1/3): el nombre de quien es WALL-E -->
+        <div class="nombre lado-walle">Tu nombre</div>
+      </div>
+
+      <!-- Trayecto punteado, como el baile en el espacio -->
+      <svg class="trayecto" viewBox="0 0 170 60">
+        <path d="M 5 50 Q 85 -20 165 50"/>
+      </svg>
+
+      <!-- EVA -->
+      <div class="robot-col">
+        <svg class="flota-b robot-click" viewBox="0 0 100 140" aria-label="EVA">
+          <ellipse cx="50" cy="30" rx="24" ry="19" fill="#eef2f7"/>
+          <ellipse cx="50" cy="32" rx="16" ry="11" fill="#10141f"/>
+          <ellipse cx="43" cy="31" rx="4.5" ry="2.6" fill="#4dd8ff" transform="rotate(-18 43 31)"/>
+          <ellipse cx="57" cy="31" rx="4.5" ry="2.6" fill="#4dd8ff" transform="rotate(18 57 31)"/>
+          <ellipse cx="50" cy="90" rx="30" ry="42" fill="#eef2f7"/>
+          <ellipse cx="13" cy="85" rx="6" ry="20" fill="#dde4ec" transform="rotate(8 13 85)"/>
+          <ellipse cx="87" cy="85" rx="6" ry="20" fill="#dde4ec" transform="rotate(-8 87 85)"/>
+        </svg>
+        <!-- EDITA AQUI (1/3): el nombre de quien es EVA -->
+        <div class="nombre lado-eva">Su nombre</div>
+      </div>
+    </div>
+
+    <h1>Dos robots distintos, una misma directiva.</h1>
+    <p class="lema">14 meses orbitando juntos.</p>
+
+    <a class="scroll-hint" href="#contador">BAJAR &#9662;</a>
   </header>
 
   <!-- ============ CONTADOR ============ -->
   <section id="contador" class="aparece">
-    <h2 class="titulo-seccion">Nuestro tiempo juntos</h2>
-    <div class="divisor">&hearts;</div>
+    <div class="encabezado">
+      <span class="etiqueta-seccion">Registro de misi&oacute;n</span>
+      <h2 class="titulo-seccion">Tiempo juntos</h2>
+    </div>
     <div class="contador">
       <div class="unidad"><div class="numero" id="cMeses">0</div><div class="etiqueta">Meses</div></div>
       <div class="unidad"><div class="numero" id="cDias">0</div><div class="etiqueta">D&iacute;as</div></div>
@@ -352,26 +488,38 @@
       <div class="unidad"><div class="numero" id="cMin">0</div><div class="etiqueta">Minutos</div></div>
       <div class="unidad"><div class="numero" id="cSeg">0</div><div class="etiqueta">Segundos</div></div>
     </div>
-    <p class="frase-contador">... y cada segundo vale la pena.</p>
+    <p class="consola">&gt; directiva en curso: seguir juntos</p>
   </section>
 
   <!-- ============ GALERIA ============ -->
   <section id="galeria" class="aparece">
-    <h2 class="titulo-seccion">Nuestros momentos</h2>
-    <div class="divisor">&hearts;</div>
+    <div class="encabezado">
+      <span class="etiqueta-seccion">Archivos recuperados</span>
+      <h2 class="titulo-seccion">Nuestros momentos</h2>
+    </div>
     <div class="galeria" id="galeriaGrid"></div>
   </section>
 
   <!-- ============ CIERRE ============ -->
   <section class="cierre aparece">
+    <svg class="planta" viewBox="0 0 80 100" aria-label="La planta en la bota">
+      <path d="M40 12 C 40 26 39 34 39 46" stroke="#58c472" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M40 22 C 32 18 28 12 27 6 C 35 7 40 13 40 22 Z" fill="#58c472"/>
+      <path d="M40 22 C 48 18 52 12 53 6 C 45 7 40 13 40 22 Z" fill="#4aa861"/>
+      <path d="M28 44 L 52 44 L 50 78 L 30 78 Z" fill="#5b4632"/>
+      <path d="M30 70 L 62 70 Q 66 70 66 76 L 66 84 Q 66 88 62 88 L 30 88 Z" fill="#6b5340"/>
+      <rect x="27" y="40" width="26" height="7" rx="3" fill="#7a6049"/>
+    </svg>
     <p class="mensaje">
       <!-- EDITA AQUI (2/3): escribe tu mensaje final -->
-      Gracias por estos 14 meses. Por las risas, los planes,
-      y por hacer que lo simple se sienta especial.
+      Como la planta en la bota: en medio de todo,
+      esto sigue creciendo. Gracias por estos 14 meses.
     </p>
     <!-- EDITA AQUI (3/3): tu firma -->
-    <p class="firma">Con amor, yo</p>
+    <p class="firma">&mdash; Tu nombre</p>
   </section>
+
+  <footer>BANDA SONORA SUGERIDA: LA VIE EN ROSE</footer>
 
 </main>
 
@@ -433,8 +581,8 @@ setInterval(actualizarContador, 1000);
 // ----- Galeria -----
 const grid = document.getElementById("galeriaGrid");
 FOTOS.forEach((foto, i) => {
-  const fig = document.createElement("figure");
-  fig.className = "polaroid";
+  const card = document.createElement("figure");
+  card.className = "archivo";
 
   const marco = document.createElement("div");
   marco.className = "marco";
@@ -445,31 +593,53 @@ FOTOS.forEach((foto, i) => {
   img.loading = "lazy";
   img.onerror = () => {
     img.remove();
-    marco.innerHTML = '<div class="sin-foto"><span class="corazon-ph">&hearts;</span>' +
-      "Agrega tu foto como<br><strong>" + foto.src + "</strong></div>";
+    marco.innerHTML = '<div class="sin-foto"><span class="brote">&#127793;</span>' +
+      "ARCHIVO NO ENCONTRADO<br>agrega <strong>" + foto.src + "</strong></div>";
   };
 
-  const pie = document.createElement("figcaption");
+  const info = document.createElement("figcaption");
+  info.className = "info";
+  const codigo = document.createElement("span");
+  codigo.className = "codigo";
+  codigo.textContent = "ARCHIVO " + String(i + 1).padStart(3, "0");
+  const pie = document.createElement("div");
+  pie.className = "pie";
   pie.textContent = foto.pie;
+  info.appendChild(codigo);
+  info.appendChild(pie);
 
   marco.appendChild(img);
-  fig.appendChild(marco);
-  fig.appendChild(pie);
-  grid.appendChild(fig);
+  card.appendChild(marco);
+  card.appendChild(info);
+  grid.appendChild(card);
 });
 
-// ----- Corazones flotantes de fondo -----
-const fondo = document.getElementById("heartsBg");
-for (let i = 0; i < 14; i++) {
-  const h = document.createElement("span");
-  h.className = "heart-float";
-  h.textContent = "♥";
-  h.style.left = Math.random() * 100 + "vw";
-  h.style.fontSize = 12 + Math.random() * 22 + "px";
-  h.style.animationDuration = 9 + Math.random() * 10 + "s";
-  h.style.animationDelay = Math.random() * 12 + "s";
-  fondo.appendChild(h);
+// ----- Estrellas de fondo -----
+const cielo = document.getElementById("cielo");
+for (let i = 0; i < 130; i++) {
+  const e = document.createElement("span");
+  e.className = "estrella";
+  const tam = Math.random() < 0.85 ? 1.5 : 2.5;
+  e.style.width = e.style.height = tam + "px";
+  e.style.left = Math.random() * 100 + "vw";
+  e.style.top = Math.random() * 100 + "vh";
+  e.style.setProperty("--d", 2.5 + Math.random() * 5 + "s");
+  e.style.setProperty("--brillo", 0.4 + Math.random() * 0.6);
+  e.style.animationDelay = Math.random() * 5 + "s";
+  cielo.appendChild(e);
 }
+
+// ----- Estrellas fugaces ocasionales -----
+function estrellaFugaz() {
+  const f = document.createElement("span");
+  f.className = "fugaz";
+  f.style.left = 30 + Math.random() * 65 + "vw";
+  f.style.top = Math.random() * 35 + "vh";
+  cielo.appendChild(f);
+  setTimeout(() => f.remove(), 1500);
+  setTimeout(estrellaFugaz, 4000 + Math.random() * 6000);
+}
+setTimeout(estrellaFugaz, 2500);
 
 // ----- Aparicion suave al hacer scroll -----
 const observador = new IntersectionObserver((entradas) => {
@@ -479,22 +649,24 @@ const observador = new IntersectionObserver((entradas) => {
 }, { threshold: 0.15 });
 document.querySelectorAll(".aparece").forEach((el) => observador.observe(el));
 
-// ----- Estallido de corazones al tocar el corazon central -----
-document.getElementById("corazonHero").addEventListener("click", (ev) => {
-  for (let i = 0; i < 12; i++) {
-    const c = document.createElement("span");
-    c.className = "mini-corazon";
-    c.textContent = "♥";
-    c.style.left = ev.clientX + "px";
-    c.style.top = ev.clientY + "px";
-    c.style.fontSize = 14 + Math.random() * 16 + "px";
-    const ang = Math.random() * 2 * Math.PI;
-    const dist = 60 + Math.random() * 90;
-    c.style.setProperty("--dx", Math.cos(ang) * dist + "px");
-    c.style.setProperty("--dy", Math.sin(ang) * dist - 40 + "px");
-    document.body.appendChild(c);
-    setTimeout(() => c.remove(), 1200);
-  }
+// ----- Chispas al tocar a WALL-E o EVA -----
+const COLORES = ["#4dd8ff", "#d98e32", "#58c472", "#ffffff"];
+document.querySelectorAll(".robot-click").forEach((robot) => {
+  robot.addEventListener("click", (ev) => {
+    for (let i = 0; i < 14; i++) {
+      const c = document.createElement("span");
+      c.className = "chispa";
+      c.style.left = ev.clientX + "px";
+      c.style.top = ev.clientY + "px";
+      c.style.background = COLORES[Math.floor(Math.random() * COLORES.length)];
+      const ang = Math.random() * 2 * Math.PI;
+      const dist = 40 + Math.random() * 80;
+      c.style.setProperty("--dx", Math.cos(ang) * dist + "px");
+      c.style.setProperty("--dy", Math.sin(ang) * dist + "px");
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 1000);
+    }
+  });
 });
 </script>
 
