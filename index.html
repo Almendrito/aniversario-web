@@ -479,7 +479,7 @@
 
   <!-- ============ PORTADA ============ -->
   <header class="hero">
-    <div class="chip"><span class="punto"></span>AXIOM &middot; REGISTRO 14 &middot; 14.07.2026</div>
+    <div class="chip"><span class="punto"></span>AXIOM &middot; REGISTRO <span id="chipRegistro">...</span> &middot; <span id="chipFecha">...</span></div>
 
     <div class="robots">
       <!-- WALL-E -->
@@ -668,6 +668,13 @@ function actualizarContador() {
   } else {
     lema.textContent = dias === 1 ? "1 día" : dias + " días";
   }
+
+  // Chip superior: numero de registro y fecha del ultimo mesiversario
+  document.getElementById("chipRegistro").textContent = meses;
+  document.getElementById("chipFecha").textContent =
+    String(ancla.getDate()).padStart(2, "0") + "." +
+    String(ancla.getMonth() + 1).padStart(2, "0") + "." +
+    ancla.getFullYear();
 }
 actualizarContador();
 setInterval(actualizarContador, 1000);
