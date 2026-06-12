@@ -409,6 +409,66 @@
     0%   { transform: translate(0, 0) scale(1); opacity: 1; }
     100% { transform: translate(var(--dx), var(--dy)) scale(0.3); opacity: 0; }
   }
+
+  /* ---------- Boton de musica ---------- */
+  .btn-musica {
+    position: fixed;
+    bottom: 1.4rem;
+    right: 1.4rem;
+    z-index: 6;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--espacio-2);
+    border: 1px solid var(--borde);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.3s, transform 0.2s, box-shadow 0.3s;
+  }
+
+  .btn-musica:hover {
+    border-color: rgba(77, 216, 255, 0.5);
+    transform: scale(1.07);
+  }
+
+  .btn-musica.sonando {
+    border-color: rgba(77, 216, 255, 0.6);
+    box-shadow: 0 0 18px rgba(77, 216, 255, 0.25);
+  }
+
+  .barras {
+    display: flex;
+    gap: 3px;
+    align-items: flex-end;
+    height: 20px;
+  }
+
+  .barras span {
+    width: 3.5px;
+    border-radius: 2px;
+    background: var(--cian);
+  }
+
+  /* Alturas en reposo */
+  .barras span:nth-child(1) { height: 8px; }
+  .barras span:nth-child(2) { height: 16px; }
+  .barras span:nth-child(3) { height: 11px; }
+  .barras span:nth-child(4) { height: 18px; }
+
+  .btn-musica.sonando .barras span {
+    animation: ecualizador 0.9s ease-in-out infinite;
+  }
+
+  .btn-musica.sonando .barras span:nth-child(2) { animation-delay: 0.15s; }
+  .btn-musica.sonando .barras span:nth-child(3) { animation-delay: 0.3s; }
+  .btn-musica.sonando .barras span:nth-child(4) { animation-delay: 0.45s; }
+
+  @keyframes ecualizador {
+    0%, 100% { height: 6px; }
+    50%      { height: 20px; }
+  }
 </style>
 </head>
 <body>
@@ -445,7 +505,7 @@
           <circle cx="96" cy="114" r="4" fill="#10141f"/>
         </svg>
         <!-- EDITA AQUI (1/3): el nombre de quien es WALL-E -->
-        <div class="nombre lado-walle">Tu nombre</div>
+        <div class="nombre lado-walle">Mateo</div>
       </div>
 
       <!-- Trayecto punteado, como el baile en el espacio -->
@@ -465,7 +525,7 @@
           <ellipse cx="87" cy="85" rx="6" ry="20" fill="#dde4ec" transform="rotate(-8 87 85)"/>
         </svg>
         <!-- EDITA AQUI (1/3): el nombre de quien es EVA -->
-        <div class="nombre lado-eva">Su nombre</div>
+        <div class="nombre lado-eva">Ayleen</div>
       </div>
     </div>
 
@@ -516,12 +576,17 @@
       esto sigue creciendo. Gracias por estos 14 meses.
     </p>
     <!-- EDITA AQUI (3/3): tu firma -->
-    <p class="firma">&mdash; Tu nombre</p>
+    <p class="firma">&mdash; Machape</p>
   </section>
 
   <footer>BANDA SONORA SUGERIDA: LA VIE EN ROSE</footer>
 
 </main>
+
+<!-- Boton flotante de musica (se oculta solo si no encuentra la cancion) -->
+<button class="btn-musica" id="btnMusica" title="Reproducir nuestra cancion" aria-label="Reproducir musica">
+  <span class="barras"><span></span><span></span><span></span><span></span></span>
+</button>
 
 <script>
 /* ==========================================================
@@ -530,7 +595,7 @@
 
 // Fecha de inicio de la relacion: anio, mes (1-12), dia.
 // 14 de mayo de 2025 = 14 meses al 14 de julio de 2026.
-const FECHA_INICIO = new Date(2025, 5 - 1, 14);
+const FECHA_INICIO = new Date(2025, 11 - 1, 14);
 
 // Fotos de la galeria. Guarda tus fotos en la carpeta "fotos/"
 // con estos nombres (o cambia los nombres aqui) y escribe el
@@ -543,6 +608,11 @@ const FOTOS = [
   { src: "fotos/5.jpg", pie: "Tu risa favorita" },
   { src: "fotos/6.jpg", pie: "Y los que vienen..." },
 ];
+
+// Cancion de fondo. Guarda el archivo mp3 en la carpeta "musica/"
+// con este nombre (o cambia el nombre aqui). Volumen entre 0 y 1.
+const MUSICA = "musica/cancion.mp3";
+const VOLUMEN = 0.6;
 
 /* ==========================================================
    De aqui hacia abajo no hace falta tocar nada
@@ -667,6 +737,31 @@ document.querySelectorAll(".robot-click").forEach((robot) => {
       setTimeout(() => c.remove(), 1000);
     }
   });
+});
+
+// ----- Musica de fondo -----
+const btnMusica = document.getElementById("btnMusica");
+const audio = new Audio(MUSICA);
+audio.loop = true;
+audio.volume = VOLUMEN;
+audio.preload = "auto";
+
+// Si el archivo no existe (todavia no lo agregas), el boton se esconde
+audio.addEventListener("error", () => {
+  btnMusica.style.display = "none";
+});
+
+btnMusica.addEventListener("click", () => {
+  if (audio.paused) {
+    audio.play().then(() => {
+      btnMusica.classList.add("sonando");
+      btnMusica.title = "Pausar la musica";
+    }).catch(() => {});
+  } else {
+    audio.pause();
+    btnMusica.classList.remove("sonando");
+    btnMusica.title = "Reproducir nuestra cancion";
+  }
 });
 </script>
 

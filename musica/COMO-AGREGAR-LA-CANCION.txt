@@ -1,0 +1,13 @@
+Guarda aqui la cancion de ustedes con el nombre exacto:
+
+  cancion.mp3
+
+Notas:
+- Si tu archivo tiene otro nombre o formato (.m4a, .ogg), puedes
+  cambiar el nombre en index.html, en la linea: const MUSICA = "musica/cancion.mp3";
+- El volumen inicial se ajusta en la linea: const VOLUMEN = 0.6; (entre 0 y 1).
+- Mientras no exista el archivo, el boton de musica no aparece en la pagina.
+- Los navegadores no permiten que la musica parta sola: siempre
+  necesita un toque en el boton (abajo a la derecha).
+- Ojo con el peso: un mp3 de 3-4 minutos a 128 kbps pesa unos 3-4 MB,
+  perfecto para la pagina. Evita archivos gigantes.
