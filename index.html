@@ -714,6 +714,49 @@
     font-weight: 600;
     margin-top: 1.8rem;
   }
+
+  /* ---------- Dias previos ---------- */
+  .previa-zona {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.4rem;
+    max-width: 920px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .previa-mensaje {
+    background: var(--panel);
+    border: 1px solid var(--borde);
+    border-radius: 16px;
+    padding: 1.8rem 2.2rem;
+    max-width: 620px;
+    font-size: clamp(1.05rem, 3vw, 1.3rem);
+    line-height: 1.8;
+    backdrop-filter: blur(6px);
+  }
+
+  .previa-etiqueta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.3em;
+    color: var(--texto-suave);
+    text-transform: uppercase;
+  }
+
+  .previa-candado {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    color: var(--texto-suave);
+    border: 1px dashed var(--borde);
+    border-radius: 10px;
+    padding: 0.8rem 1.2rem;
+  }
 </style>
 </head>
 <body>
@@ -726,7 +769,7 @@
   <div class="chip"><span class="punto"></span>TRANSMISI&Oacute;N ENTRANTE &middot; PRIORIDAD ALTA</div>
   <!-- EDITA AQUI (4/4): destinataria y pregunta de entrada -->
   <p class="intro-para">Nueva directiva para: Ayleen</p>
-  <div class="intro-pregunta">&iquest;Quieres pasar el 14 de julio conmigo?</div>
+  <div class="intro-pregunta">&iquest;Quieres pasar el 14 de junio conmigo?</div>
   <div class="intro-botones">
     <button class="btn-si" id="btnSi">S&iacute;, acepto</button>
     <button class="btn-no" id="btnNo">No</button>
@@ -826,6 +869,28 @@
     <p class="consola">&gt; directiva en curso: seguir juntos</p>
   </section>
 
+  <!-- ============ DIAS PREVIOS (se oculta sola el gran dia) ============ -->
+  <section id="previa" class="aparece">
+    <div class="encabezado">
+      <span class="etiqueta-seccion">Plan del d&iacute;a</span>
+      <h2 class="titulo-seccion" id="previaDia">...</h2>
+    </div>
+    <div class="previa-zona">
+      <p class="previa-mensaje" id="previaMensaje">...</p>
+      <span class="previa-etiqueta">Cuenta regresiva para el gran d&iacute;a</span>
+      <div class="contador">
+        <div class="unidad"><div class="numero" id="pDias">0</div><div class="etiqueta">D&iacute;as</div></div>
+        <div class="unidad"><div class="numero" id="pHoras">0</div><div class="etiqueta">Horas</div></div>
+        <div class="unidad"><div class="numero" id="pMin">0</div><div class="etiqueta">Minutos</div></div>
+        <div class="unidad"><div class="numero" id="pSeg">0</div><div class="etiqueta">Segundos</div></div>
+      </div>
+      <p class="previa-candado">
+        <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M7 10 V7 a5 5 0 0 1 10 0 v3" fill="none" stroke="currentColor" stroke-width="2"/><rect x="5" y="10" width="14" height="10" rx="2" fill="currentColor"/></svg>
+        Secreto <span id="previaFechaEvento">...</span>
+      </p>
+    </div>
+  </section>
+
   <!-- ============ GALERIA ============ -->
   <section id="galeria" class="aparece">
     <div class="encabezado">
@@ -848,7 +913,7 @@
     <p class="mensaje">
       <!-- EDITA AQUI (2/3): escribe tu mensaje final -->
       Como la planta en la bota: en medio de todo,
-      esto sigue creciendo. Gracias por estos 14 meses.
+      esto sigue creciendo. Gracias por estos 7 meses.
     </p>
     <!-- EDITA AQUI (3/3): tu firma -->
     <p class="firma">&mdash; Machape</p>
@@ -919,7 +984,7 @@
    ========================================================== */
 
 // Fecha de inicio de la relacion: anio, mes (1-12), dia.
-// 14 de mayo de 2025 = 14 meses al 14 de julio de 2026.
+// 14 de mayo de 2025 = 14 meses al 14 de junio de 2026.
 const FECHA_INICIO = new Date(2025, 11 - 1, 14);
 
 // Fotos de la galeria. Guarda tus fotos en la carpeta "fotos/"
@@ -943,6 +1008,20 @@ const VOLUMEN = 0.6;
 // y pista que aparece despues de 3 intentos fallidos.
 const CLAVE = "1407";
 const PISTA = "Combinación de nuestros números favoritos";
+
+// EDITA AQUI (6/6): el gran dia y los planes de los dias previos.
+// Antes de esta fecha la pagina pregunta por el dia de hoy, muestra
+// el plan del dia y una cuenta regresiva; la galeria, el mensaje
+// final y la carta quedan bloqueados hasta esa fecha.
+const FECHA_EVENTO = new Date(2026, 6 - 1, 14);
+
+// Mensajes por dia (formato "AAAA-MM-DD"). Los dias que no esten
+// en la lista usan el mensaje generico de mas abajo.
+const MENSAJES_DIA = {
+  "2026-06-14": "Hoy cumplimos 7 meses. Se celebra como corresponde.",
+  "2026-07-13": "Mañana es el gran día. Preparar la torta y planear.",
+};
+const MENSAJE_GENERICO = "Hoy también te elijo. Plan simple: estar juntos. TEAmo";
 
 /* ==========================================================
    De aqui hacia abajo no hace falta tocar nada
@@ -1225,6 +1304,64 @@ claveBtn.addEventListener("click", probarClave);
 claveInput.addEventListener("keydown", (ev) => {
   if (ev.key === "Enter") probarClave();
 });
+
+// ----- Modo del dia: previa o gran dia -----
+function claveFecha(d) {
+  return d.getFullYear() + "-" +
+    String(d.getMonth() + 1).padStart(2, "0") + "-" +
+    String(d.getDate()).padStart(2, "0");
+}
+
+const ahoraCarga = new Date();
+const hoySoloFecha = new Date(ahoraCarga.getFullYear(), ahoraCarga.getMonth(), ahoraCarga.getDate());
+const esGranDia = hoySoloFecha >= FECHA_EVENTO;
+const seccionPrevia = document.getElementById("previa");
+
+if (esGranDia) {
+  // El gran dia: se muestra todo y la seccion de dias previos desaparece
+  seccionPrevia.remove();
+} else {
+  // Dias previos: galeria, mensaje final y carta quedan bloqueados
+  document.getElementById("galeria").hidden = true;
+  document.getElementById("carta").hidden = true;
+  document.querySelector(".cierre").hidden = true;
+
+  // La pregunta de entrada se adapta al dia de hoy
+  const nombreDia = ahoraCarga.toLocaleDateString("es-CL", { weekday: "long" });
+  document.querySelector(".intro-pregunta").textContent =
+    "¿Quieres pasar este " + nombreDia + " conmigo?";
+
+  // Titulo con la fecha y mensaje del dia
+  const tituloDia = ahoraCarga.toLocaleDateString("es-CL", { weekday: "long", day: "numeric", month: "long" });
+  document.getElementById("previaDia").textContent =
+    tituloDia.charAt(0).toUpperCase() + tituloDia.slice(1);
+  document.getElementById("previaMensaje").textContent =
+    MENSAJES_DIA[claveFecha(ahoraCarga)] || MENSAJE_GENERICO;
+
+  // Un color de acento distinto segun el dia de la semana
+  const ACENTOS_DIA = ["#b58cff", "#4dd8ff", "#58c472", "#ffd166", "#e2697a", "#d98e32", "#7fe3ff"];
+  const acento = ACENTOS_DIA[ahoraCarga.getDay()];
+  document.getElementById("previaMensaje").style.borderColor = acento + "59";
+  document.getElementById("previaDia").style.color = acento;
+
+  // Fecha de desbloqueo que se muestra junto al candado
+  document.getElementById("previaFechaEvento").textContent =
+    String(FECHA_EVENTO.getDate()).padStart(2, "0") + "." +
+    String(FECHA_EVENTO.getMonth() + 1).padStart(2, "0") + "." +
+    FECHA_EVENTO.getFullYear();
+
+  // Cuenta regresiva; al llegar a cero la pagina se recarga y desbloquea todo
+  function cuentaRegresiva() {
+    const dif = FECHA_EVENTO - new Date();
+    if (dif <= 0) { location.reload(); return; }
+    document.getElementById("pDias").textContent = Math.floor(dif / 86400000);
+    document.getElementById("pHoras").textContent = Math.floor(dif / 3600000) % 24;
+    document.getElementById("pMin").textContent = Math.floor(dif / 60000) % 60;
+    document.getElementById("pSeg").textContent = Math.floor(dif / 1000) % 60;
+  }
+  cuentaRegresiva();
+  setInterval(cuentaRegresiva, 1000);
+}
 </script>
 
 </body>
