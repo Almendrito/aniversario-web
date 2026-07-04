@@ -1317,6 +1317,11 @@ const hoySoloFecha = new Date(ahoraCarga.getFullYear(), ahoraCarga.getMonth(), a
 const esGranDia = hoySoloFecha >= FECHA_EVENTO;
 const seccionPrevia = document.getElementById("previa");
 
+// La pregunta de entrada se renueva todos los dias
+const nombreDia = ahoraCarga.toLocaleDateString("es-CL", { weekday: "long" });
+document.querySelector(".intro-pregunta").textContent =
+  "¿Quieres pasar este " + nombreDia + " conmigo?";
+
 if (esGranDia) {
   // El gran dia: se muestra todo y la seccion de dias previos desaparece
   seccionPrevia.remove();
@@ -1325,11 +1330,6 @@ if (esGranDia) {
   document.getElementById("galeria").hidden = true;
   document.getElementById("carta").hidden = true;
   document.querySelector(".cierre").hidden = true;
-
-  // La pregunta de entrada se adapta al dia de hoy
-  const nombreDia = ahoraCarga.toLocaleDateString("es-CL", { weekday: "long" });
-  document.querySelector(".intro-pregunta").textContent =
-    "¿Quieres pasar este " + nombreDia + " conmigo?";
 
   // Titulo con la fecha y mensaje del dia
   const tituloDia = ahoraCarga.toLocaleDateString("es-CL", { weekday: "long", day: "numeric", month: "long" });
