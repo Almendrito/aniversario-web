@@ -1285,11 +1285,6 @@ btnNo.addEventListener("click", escapar);
 btnSi.addEventListener("click", (ev) => {
   introConsola.textContent = "> directiva aceptada";
   estallido(ev.clientX || window.innerWidth / 2, ev.clientY || window.innerHeight / 2, 26);
-  // Como es un toque de ella, el navegador permite partir la musica
-  audio.play().then(() => {
-    btnMusica.classList.add("sonando");
-    btnMusica.title = "Pausar la musica";
-  }).catch(() => {});
   setTimeout(() => {
     intro.style.opacity = "0";
     intro.style.pointerEvents = "none";
