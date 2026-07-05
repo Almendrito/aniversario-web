@@ -354,6 +354,20 @@
     font-weight: 500;
   }
 
+  /* ---------- Playlist ---------- */
+  .playlist-marco {
+    max-width: 620px;
+    margin: 0 auto;
+  }
+
+  .playlist-marco iframe {
+    width: 100%;
+    height: 400px;
+    border: 0;
+    border-radius: 14px;
+    display: block;
+  }
+
   /* ---------- Cierre ---------- */
   .cierre {
     text-align: center;
@@ -900,6 +914,15 @@
     <div class="galeria" id="galeriaGrid"></div>
   </section>
 
+  <!-- ============ PLAYLIST ============ -->
+  <section id="playlist" class="aparece">
+    <div class="encabezado">
+      <span class="etiqueta-seccion">Banda sonora</span>
+      <h2 class="titulo-seccion">Nuestra playlist</h2>
+    </div>
+    <div class="playlist-marco" id="playlistMarco"></div>
+  </section>
+
   <!-- ============ CIERRE ============ -->
   <section class="cierre aparece">
     <svg class="planta" viewBox="0 0 80 100" aria-label="La planta en la bota">
@@ -1004,6 +1027,11 @@ const FOTOS = [
 const MUSICA = "musica/cancion.mp3";
 const VOLUMEN = 0.6;
 
+// Playlist de Spotify. Pega aqui el enlace de la playlist
+// (en Spotify: Compartir > Copiar enlace a la playlist).
+// Si lo dejas vacio, la seccion no se muestra.
+const PLAYLIST = "https://open.spotify.com/playlist/4O6IDjuA7uYQWOuWUlyTlZ?si=5b979dd56f894970";
+
 // Clave para abrir la carta del final (no distingue mayusculas)
 // y pista que aparece despues de 3 intentos fallidos.
 const CLAVE = "1407";
@@ -1107,6 +1135,18 @@ FOTOS.forEach((foto, i) => {
   card.appendChild(info);
   grid.appendChild(card);
 });
+
+// ----- Playlist de Spotify -----
+const idPlaylist = (PLAYLIST.match(/playlist\/([A-Za-z0-9]+)/) || [])[1];
+if (idPlaylist) {
+  const marcoPlaylist = document.createElement("iframe");
+  marcoPlaylist.src = "https://open.spotify.com/embed/playlist/" + idPlaylist + "?utm_source=generator&theme=0";
+  marcoPlaylist.loading = "lazy";
+  marcoPlaylist.allow = "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture";
+  document.getElementById("playlistMarco").appendChild(marcoPlaylist);
+} else {
+  document.getElementById("playlist").remove();
+}
 
 // ----- Estrellas de fondo -----
 const cielo = document.getElementById("cielo");
@@ -1326,10 +1366,12 @@ if (esGranDia) {
   // El gran dia: se muestra todo y la seccion de dias previos desaparece
   seccionPrevia.remove();
 } else {
-  // Dias previos: galeria, mensaje final y carta quedan bloqueados
+  // Dias previos: galeria, playlist, mensaje final y carta quedan bloqueados
   document.getElementById("galeria").hidden = true;
   document.getElementById("carta").hidden = true;
   document.querySelector(".cierre").hidden = true;
+  const seccionPlaylist = document.getElementById("playlist");
+  if (seccionPlaylist) seccionPlaylist.hidden = true;
 
   // Titulo con la fecha y mensaje del dia
   const tituloDia = ahoraCarga.toLocaleDateString("es-CL", { weekday: "long", day: "numeric", month: "long" });
