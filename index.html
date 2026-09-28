@@ -436,6 +436,197 @@
     color: var(--texto-suave);
   }
 
+  /* ---------- Mensajes ---------- */
+  .mensajes {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .msj-panel {
+    background: var(--panel);
+    border: 1px solid var(--borde);
+    border-radius: 16px;
+    padding: 1.6rem 1.6rem 1.4rem;
+    backdrop-filter: blur(6px);
+  }
+
+  .msj-prompt {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--verde);
+    margin-bottom: 1.1rem;
+    text-align: center;
+  }
+
+  .msj-login {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  .msj-campo, .msj-texto {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--espacio-2);
+    border: 1px solid var(--borde);
+    color: var(--texto);
+    padding: 0.8rem 1rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    outline: none;
+    width: 100%;
+    transition: border-color 0.3s;
+  }
+
+  .msj-campo:focus, .msj-texto:focus { border-color: rgba(77, 216, 255, 0.55); }
+
+  .msj-texto {
+    resize: vertical;
+    min-height: 96px;
+    line-height: 1.6;
+  }
+
+  .msj-fila {
+    display: flex;
+    gap: 0.6rem;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 0.7rem;
+  }
+
+  .msj-login .msj-fila { justify-content: center; }
+
+  .msj-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    background: var(--cian);
+    color: #0b0f1a;
+    border: none;
+    border-radius: 10px;
+    padding: 0.7rem 1.2rem;
+    cursor: pointer;
+  }
+
+  .msj-btn:disabled { opacity: 0.5; cursor: default; }
+
+  .msj-btn.secundario {
+    background: transparent;
+    color: var(--texto-suave);
+    border: 1px solid var(--borde);
+  }
+
+  .msj-estado {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: #e2697a;
+    min-height: 1.1em;
+    margin-top: 0.7rem;
+    text-align: center;
+  }
+
+  .msj-estado.ok { color: var(--texto-suave); }
+
+  .msj-cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--texto-suave);
+    margin-bottom: 0.9rem;
+  }
+
+  .msj-enlace {
+    background: none;
+    border: none;
+    color: var(--cian);
+    font: inherit;
+    letter-spacing: inherit;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .msj-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    margin-top: 1.4rem;
+  }
+
+  .msj-hilo {
+    background: var(--panel);
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    padding: 1.2rem 1.3rem;
+  }
+
+  .msj {
+    border-left: 3px solid var(--cian);
+    padding-left: 0.9rem;
+  }
+
+  .msj.walle { border-left-color: var(--ambar); }
+
+  .msj-respuestas {
+    margin: 1rem 0 0 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .msj-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.66rem;
+    letter-spacing: 0.15em;
+    color: var(--texto-suave);
+    margin-bottom: 0.35rem;
+  }
+
+  .msj-autor { font-weight: 700; color: var(--cian); }
+  .msj.walle .msj-autor { color: var(--ambar); }
+
+  .msj-nuevo {
+    color: #0b0f1a;
+    background: var(--verde);
+    border-radius: 4px;
+    padding: 0.05rem 0.4rem;
+    margin-left: 0.5rem;
+    letter-spacing: 0.1em;
+  }
+
+  .msj-cuerpo {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    line-height: 1.7;
+  }
+
+  .msj-acciones {
+    display: flex;
+    gap: 1.1rem;
+    margin-top: 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+  }
+
+  .msj-acciones .borrar { color: var(--texto-suave); }
+
+  .msj-responder { margin: 0.9rem 0 0 1.1rem; }
+  .msj-responder .msj-texto { min-height: 70px; }
+
+  .msj-vacio {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--texto-suave);
+  }
+
   /* ---------- Cierre ---------- */
   .cierre {
     text-align: center;
@@ -1000,6 +1191,50 @@
     <div class="bitacora" id="bitacoraLista"></div>
   </section>
 
+  <!-- ============ MENSAJES (se guardan en Supabase; ver supabase/schema.sql) ============ -->
+  <section id="mensajes" class="aparece">
+    <div class="encabezado">
+      <span class="etiqueta-seccion">Canal privado</span>
+      <h2 class="titulo-seccion">Mensajes</h2>
+    </div>
+    <div class="mensajes">
+
+      <div class="msj-panel" id="msjLogin" hidden>
+        <p class="msj-prompt">&gt; canal cifrado &middot; solo para nosotros dos</p>
+        <form class="msj-login" id="msjFormLogin">
+          <input class="msj-campo" id="msjUsuario" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="usuario">
+          <input class="msj-campo" id="msjClave" type="password" autocomplete="current-password" placeholder="contraseña">
+          <div class="msj-fila">
+            <button class="msj-btn" type="submit" id="msjEntrar">ENTRAR</button>
+            <button class="msj-btn secundario" type="button" id="msjCrear">CREAR CUENTA</button>
+          </div>
+        </form>
+        <p class="msj-estado" id="msjEstadoLogin"></p>
+      </div>
+
+      <div id="msjCanal" hidden>
+        <div class="msj-panel">
+          <div class="msj-cabecera">
+            <span id="msjQuien"></span>
+            <span>
+              <button class="msj-enlace" type="button" id="msjActualizar">ACTUALIZAR</button>
+              &middot;
+              <button class="msj-enlace" type="button" id="msjSalir">SALIR</button>
+            </span>
+          </div>
+          <textarea class="msj-texto" id="msjNuevo" maxlength="2000" placeholder="Escribe un mensaje..."></textarea>
+          <div class="msj-fila">
+            <button class="msj-btn" type="button" id="msjEnviar">ENVIAR</button>
+          </div>
+          <p class="msj-estado" id="msjEstado"></p>
+        </div>
+        <div class="msj-lista" id="msjLista"></div>
+      </div>
+
+      <p class="msj-vacio" id="msjSinConexion" hidden>&gt; canal fuera de l&iacute;nea por ahora</p>
+    </div>
+  </section>
+
   <!-- ============ CARTA ============ -->
   <section id="carta" class="aparece">
     <div class="encabezado">
@@ -1083,6 +1318,7 @@
   <span class="barras"><span></span><span></span><span></span><span></span></span>
 </button>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.111.0"></script>
 <script>
 /* ==========================================================
    CONFIGURACION: esto es lo unico que necesitas editar aqui
@@ -1161,6 +1397,12 @@ const ENTRADAS = [
 
 // Cuantas entradas se ven de entrada (el resto con "ver anteriores").
 const ENTRADAS_VISIBLES = 3;
+
+// Mensajes: proyecto Supabase (el mismo de Habitos y Mi Semana).
+// La key "publishable" esta hecha para ir en el navegador; lo que
+// protege los mensajes son las reglas de supabase/schema.sql.
+const SUPABASE_URL = "https://zfksqtrorfraifnrgaot.supabase.co";
+const SUPABASE_KEY = "sb_publishable_tnZgW4xeiJq_VC7WfGb8wA_sseoOxcl";
 
 /* ==========================================================
    De aqui hacia abajo no hace falta tocar nada
@@ -1537,6 +1779,281 @@ claveBtn.addEventListener("click", probarClave);
 claveInput.addEventListener("keydown", (ev) => {
   if (ev.key === "Enter") probarClave();
 });
+
+// ----- Mensajes -----
+// Cuentas por usuario, sin correo: Supabase exige un email, asi que
+// "ayleen" se traduce a ayleen@almendrito.github.io (mismo truco que
+// Mi Semana; ese dominio no recibe correo y nadie mas lo puede usar).
+const DOMINIO_USUARIOS = "almendrito.github.io";
+
+const msj = {
+  login: document.getElementById("msjLogin"),
+  formLogin: document.getElementById("msjFormLogin"),
+  usuario: document.getElementById("msjUsuario"),
+  clave: document.getElementById("msjClave"),
+  entrar: document.getElementById("msjEntrar"),
+  crear: document.getElementById("msjCrear"),
+  estadoLogin: document.getElementById("msjEstadoLogin"),
+  canal: document.getElementById("msjCanal"),
+  quien: document.getElementById("msjQuien"),
+  actualizar: document.getElementById("msjActualizar"),
+  salir: document.getElementById("msjSalir"),
+  nuevo: document.getElementById("msjNuevo"),
+  enviar: document.getElementById("msjEnviar"),
+  estado: document.getElementById("msjEstado"),
+  lista: document.getElementById("msjLista"),
+  sinConexion: document.getElementById("msjSinConexion"),
+};
+
+function usuarioAEmail(nombre) {
+  const u = String(nombre || "").trim().toLowerCase()
+    .normalize("NFD").replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9._-]+/g, "");
+  if (!/^[a-z0-9][a-z0-9._-]{2,31}$/.test(u)) return null;
+  return u + "@" + DOMINIO_USUARIOS;
+}
+
+function mensajeError(err) {
+  const m = String((err && (err.message || err.error_description)) || err || "");
+  if (/Invalid login credentials/i.test(m)) return "> usuario o contraseña incorrectos";
+  if (/User already registered|already been registered/i.test(m)) return "> ese usuario ya existe: usa ENTRAR";
+  if (/Password should be at least/i.test(m)) return "> la contraseña necesita al menos 6 caracteres";
+  if (/rate limit|too many/i.test(m)) return "> demasiados intentos: espera un momento";
+  if (/no autorizada|row-level security/i.test(m)) return "> esta cuenta no tiene acceso al canal";
+  if (/Could not find the table|does not exist/i.test(m)) return "> falta ejecutar supabase/schema.sql";
+  if (/Failed to fetch|NetworkError|network/i.test(m)) return "> sin conexión";
+  return "> " + (m || "error desconocido");
+}
+
+// Recuerda hasta que mensaje leyo cada uno, para marcar los nuevos
+function leerVisto(uid) {
+  try { return Number(localStorage.getItem("aniversario-visto-" + uid)) || 0; } catch (e) { return 0; }
+}
+function guardarVisto(uid, id) {
+  try { localStorage.setItem("aniversario-visto-" + uid, String(id)); } catch (e) {}
+}
+
+function fechaCorta(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString("es-CL", { day: "2-digit", month: "2-digit", year: "numeric" }) +
+    " · " + d.toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" });
+}
+
+let sb = null;
+let miUid = null;
+
+function mostrarLogin() {
+  miUid = null;
+  msj.canal.hidden = true;
+  msj.login.hidden = false;
+}
+
+async function mostrarCanal(sesion) {
+  const { data: esMiembro, error } = await sb.rpc("aniversario_es_miembro");
+  if (error || !esMiembro) {
+    await sb.auth.signOut();
+    mostrarLogin();
+    msj.estadoLogin.textContent = error ? mensajeError(error) : "> esta cuenta no tiene acceso al canal";
+    return;
+  }
+  miUid = sesion.user.id;
+  msj.quien.textContent = "CONECTADO: " + sesion.user.email.split("@")[0].toUpperCase();
+  msj.login.hidden = true;
+  msj.canal.hidden = false;
+  cargarMensajes();
+}
+
+function crearMensaje(m, vistoHasta, esPrincipal) {
+  const div = document.createElement("div");
+  div.className = "msj " + (m.autor_lado === "walle" ? "walle" : "eva");
+
+  const meta = document.createElement("div");
+  meta.className = "msj-meta";
+  const autor = document.createElement("span");
+  autor.className = "msj-autor";
+  autor.textContent = m.autor_nombre.toUpperCase();
+  meta.append(autor, " · " + fechaCorta(m.created_at));
+  if (m.autor !== miUid && m.id > vistoHasta) {
+    const nuevo = document.createElement("span");
+    nuevo.className = "msj-nuevo";
+    nuevo.textContent = "NUEVO";
+    meta.appendChild(nuevo);
+  }
+
+  const cuerpo = document.createElement("div");
+  cuerpo.className = "msj-cuerpo";
+  cuerpo.textContent = m.texto;
+
+  const acciones = document.createElement("div");
+  acciones.className = "msj-acciones";
+  if (esPrincipal) {
+    const responder = document.createElement("button");
+    responder.className = "msj-enlace";
+    responder.type = "button";
+    responder.textContent = "RESPONDER";
+    responder.addEventListener("click", () => abrirRespuesta(div.parentElement, m.id));
+    acciones.appendChild(responder);
+  }
+  if (m.autor === miUid) {
+    const borrar = document.createElement("button");
+    borrar.className = "msj-enlace borrar";
+    borrar.type = "button";
+    borrar.textContent = "BORRAR";
+    borrar.addEventListener("click", () => borrarMensaje(m.id, esPrincipal));
+    acciones.appendChild(borrar);
+  }
+
+  div.append(meta, cuerpo, acciones);
+  return div;
+}
+
+function abrirRespuesta(hilo, idPrincipal) {
+  const abierta = hilo.querySelector(".msj-responder");
+  if (abierta) { abierta.querySelector("textarea").focus(); return; }
+
+  const caja = document.createElement("div");
+  caja.className = "msj-responder";
+  const texto = document.createElement("textarea");
+  texto.className = "msj-texto";
+  texto.maxLength = 2000;
+  texto.placeholder = "Tu respuesta...";
+  const fila = document.createElement("div");
+  fila.className = "msj-fila";
+  const cancelar = document.createElement("button");
+  cancelar.className = "msj-btn secundario";
+  cancelar.type = "button";
+  cancelar.textContent = "CANCELAR";
+  cancelar.addEventListener("click", () => caja.remove());
+  const enviar = document.createElement("button");
+  enviar.className = "msj-btn";
+  enviar.type = "button";
+  enviar.textContent = "RESPONDER";
+  enviar.addEventListener("click", () => enviarMensaje(texto, enviar, idPrincipal));
+  fila.append(cancelar, enviar);
+  caja.append(texto, fila);
+  hilo.appendChild(caja);
+  texto.focus();
+}
+
+async function cargarMensajes() {
+  msj.estado.className = "msj-estado ok";
+  msj.estado.textContent = "> sincronizando...";
+  const { data, error } = await sb
+    .from("aniversario_mensajes")
+    .select("id, created_at, autor, autor_nombre, autor_lado, texto, respuesta_a")
+    .order("id", { ascending: true });
+  if (error) {
+    msj.estado.className = "msj-estado";
+    msj.estado.textContent = mensajeError(error);
+    return;
+  }
+  msj.estado.textContent = "";
+
+  const vistoHasta = leerVisto(miUid);
+  const principales = data.filter((m) => m.respuesta_a === null);
+  const respuestas = data.filter((m) => m.respuesta_a !== null);
+
+  // Hilos ordenados por su ultima actividad (el mas reciente arriba)
+  const ultimo = (p) => Math.max(p.id, ...respuestas.filter((r) => r.respuesta_a === p.id).map((r) => r.id));
+  principales.sort((a, b) => ultimo(b) - ultimo(a));
+
+  msj.lista.innerHTML = "";
+  if (principales.length === 0) {
+    msj.lista.innerHTML = '<p class="msj-vacio">&gt; todavía no hay mensajes</p>';
+  }
+  principales.forEach((p) => {
+    const hilo = document.createElement("div");
+    hilo.className = "msj-hilo";
+    hilo.appendChild(crearMensaje(p, vistoHasta, true));
+    const suyas = respuestas.filter((r) => r.respuesta_a === p.id);
+    if (suyas.length) {
+      const cont = document.createElement("div");
+      cont.className = "msj-respuestas";
+      suyas.forEach((r) => cont.appendChild(crearMensaje(r, vistoHasta, false)));
+      hilo.appendChild(cont);
+    }
+    msj.lista.appendChild(hilo);
+  });
+
+  if (data.length) guardarVisto(miUid, Math.max(...data.map((m) => m.id)));
+}
+
+async function enviarMensaje(campo, boton, respuestaA) {
+  const texto = campo.value.trim();
+  if (!texto) { campo.focus(); return; }
+  boton.disabled = true;
+  const { error } = await sb.from("aniversario_mensajes")
+    .insert({ texto, respuesta_a: respuestaA || null, autor_nombre: "", autor_lado: "" });
+  boton.disabled = false;
+  if (error) {
+    msj.estado.className = "msj-estado";
+    msj.estado.textContent = mensajeError(error);
+    return;
+  }
+  campo.value = "";
+  cargarMensajes();
+}
+
+async function borrarMensaje(id, esPrincipal) {
+  const aviso = esPrincipal
+    ? "¿Borrar este mensaje? También se borran sus respuestas."
+    : "¿Borrar esta respuesta?";
+  if (!confirm(aviso)) return;
+  const { error } = await sb.from("aniversario_mensajes").delete().eq("id", id);
+  if (error) {
+    msj.estado.className = "msj-estado";
+    msj.estado.textContent = mensajeError(error);
+    return;
+  }
+  cargarMensajes();
+}
+
+async function autenticar(crear) {
+  const email = usuarioAEmail(msj.usuario.value);
+  const password = msj.clave.value;
+  if (!email) {
+    msj.estadoLogin.textContent = "> el usuario necesita 3 a 32 letras o números, sin espacios";
+    return;
+  }
+  if (!password) { msj.clave.focus(); return; }
+  msj.entrar.disabled = msj.crear.disabled = true;
+  msj.estadoLogin.textContent = "";
+  const { data, error } = crear
+    ? await sb.auth.signUp({ email, password })
+    : await sb.auth.signInWithPassword({ email, password });
+  msj.entrar.disabled = msj.crear.disabled = false;
+  if (error) { msj.estadoLogin.textContent = mensajeError(error); return; }
+  msj.clave.value = "";
+  if (data.session) mostrarCanal(data.session);
+}
+
+if (window.supabase && SUPABASE_URL && SUPABASE_KEY) {
+  // storageKey propio: entrar o salir aqui no toca la sesion de Mi Semana
+  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth: { storageKey: "aniversario-auth" },
+  });
+
+  msj.formLogin.addEventListener("submit", (ev) => { ev.preventDefault(); autenticar(false); });
+  msj.crear.addEventListener("click", () => autenticar(true));
+  msj.enviar.addEventListener("click", () => enviarMensaje(msj.nuevo, msj.enviar, null));
+  msj.actualizar.addEventListener("click", cargarMensajes);
+  msj.salir.addEventListener("click", async () => {
+    await sb.auth.signOut();
+    msj.lista.innerHTML = "";
+    mostrarLogin();
+  });
+  // Al volver a la pestaña se traen los mensajes nuevos
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden && miUid) cargarMensajes();
+  });
+
+  sb.auth.getSession().then(({ data }) => {
+    if (data.session) mostrarCanal(data.session);
+    else mostrarLogin();
+  });
+} else {
+  msj.sinConexion.hidden = false;
+}
 
 // ----- Modo del dia: previa o gran dia -----
 function claveFecha(d) {
