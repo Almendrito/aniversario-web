@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Directiva: 7 meses</title>
+<title>Directiva: Ayleen</title>
 <meta name="description" content="Dos robots distintos, una misma neurona">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -366,6 +366,74 @@
     border: 0;
     border-radius: 14px;
     display: block;
+  }
+
+  /* ---------- Bitacora ---------- */
+  .bitacora {
+    max-width: 680px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.3rem;
+  }
+
+  .entrada {
+    background: var(--panel);
+    border: 1px solid var(--borde);
+    border-left: 3px solid var(--cian);
+    border-radius: 14px;
+    padding: 1.6rem 1.8rem;
+    backdrop-filter: blur(6px);
+  }
+
+  .entrada-fecha {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    color: var(--texto-suave);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .entrada h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.9rem;
+  }
+
+  .entrada p {
+    line-height: 1.85;
+    margin-bottom: 0.9rem;
+  }
+
+  .entrada p:last-child { margin-bottom: 0; }
+
+  .entrada-resto[hidden] { display: none; }
+
+  .entrada-toggle, .bitacora-mas {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    background: none;
+    border: none;
+    color: var(--cian);
+    cursor: pointer;
+    padding: 0;
+    margin-top: 0.4rem;
+  }
+
+  .bitacora-mas {
+    align-self: center;
+    border: 1px solid var(--borde);
+    border-radius: 999px;
+    padding: 0.6rem 1.3rem;
+  }
+
+  .bitacora-vacia {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--texto-suave);
   }
 
   /* ---------- Cierre ---------- */
@@ -783,7 +851,7 @@
   <div class="chip"><span class="punto"></span>TRANSMISI&Oacute;N ENTRANTE &middot; PRIORIDAD ALTA</div>
   <!-- EDITA AQUI (4/4): destinataria y pregunta de entrada -->
   <p class="intro-para">Nueva directiva para: Ayleen</p>
-  <div class="intro-pregunta">&iquest;Quieres pasar el 14 de junio conmigo?</div>
+  <div class="intro-pregunta">&iquest;Quieres pasar este d&iacute;a conmigo?</div>
   <div class="intro-botones">
     <button class="btn-si" id="btnSi">S&iacute;, acepto</button>
     <button class="btn-no" id="btnNo">No</button>
@@ -923,23 +991,13 @@
     <div class="playlist-marco" id="playlistMarco"></div>
   </section>
 
-  <!-- ============ CIERRE ============ -->
-  <section class="cierre aparece">
-    <svg class="planta" viewBox="0 0 80 100" aria-label="La planta en la bota">
-      <path d="M40 12 C 40 26 39 34 39 46" stroke="#58c472" stroke-width="3" fill="none" stroke-linecap="round"/>
-      <path d="M40 22 C 32 18 28 12 27 6 C 35 7 40 13 40 22 Z" fill="#58c472"/>
-      <path d="M40 22 C 48 18 52 12 53 6 C 45 7 40 13 40 22 Z" fill="#4aa861"/>
-      <path d="M28 44 L 52 44 L 50 78 L 30 78 Z" fill="#5b4632"/>
-      <path d="M30 70 L 62 70 Q 66 70 66 76 L 66 84 Q 66 88 62 88 L 30 88 Z" fill="#6b5340"/>
-      <rect x="27" y="40" width="26" height="7" rx="3" fill="#7a6049"/>
-    </svg>
-    <p class="mensaje">
-      <!-- EDITA AQUI (2/3): escribe tu mensaje final -->
-      Como la planta en la bota: en medio de todo,
-      esto sigue creciendo. Gracias por estos 7 meses.
-    </p>
-    <!-- EDITA AQUI (3/3): tu firma -->
-    <p class="firma">&mdash; Machape</p>
+  <!-- ============ BITACORA (las entradas se editan en ENTRADAS, abajo) ============ -->
+  <section id="bitacora" class="aparece">
+    <div class="encabezado">
+      <span class="etiqueta-seccion">Bit&aacute;cora de a bordo</span>
+      <h2 class="titulo-seccion">Cosas que te escribo</h2>
+    </div>
+    <div class="bitacora" id="bitacoraLista"></div>
   </section>
 
   <!-- ============ CARTA ============ -->
@@ -975,23 +1033,47 @@
       </div>
 
       <article class="carta-papel" id="cartaPapel" hidden>
-        <p class="carta-cabecera">DE: MATEO &middot; PARA: AYLEEN</p>
-        <!-- EDITA AQUI (5/5): tu carta. Cada <p> es un parrafo;
-             copia mas lineas <p>...</p> si necesitas mas. -->
+        <p class="carta-cabecera">DE: MATEO &middot; PARA: AYLEEN &middot; 14.11.2026</p>
+        <!-- EDITA AQUI (5/6): la carta del primer año. Cada <p> es un
+             parrafo; copia mas lineas <p>...</p> si necesitas mas.
+             TEXTO DE EJEMPLO: reemplazalo antes del 14 de noviembre.
+             La carta de los 7 meses quedo guardada en la bitacora. -->
         <p>Ayleen:</p>
         <p>
-          Ya son siete meses pololeando, considerando lo que estuvimos saliendo, son casi 10 meses que nos hemos estado conociendo. El tiempo genuinamente ha pasado muy rápido.
+          [Ejemplo] Hoy cumplimos un año. Hace doce meses no sabía todo lo que iba a
+          aprender contigo, ni cuántas recetas, series y tonteras íbamos a acumular.
         </p>
         <p>
-          TEAmo mucho corazón, de verdad quiero que estemos una vida juntos. Diciendo tonteras, haciendo recetas, viendo series y pelis que nos gustan, seguir siendo el compañero del otro. Esta última idea es aquella que me motiva a seguir desafiandome a diario amor. Me encantas, ojála te guste la idea del sitio web, donde pueda ser un pequeño blog que ambos.
+          [Ejemplo] Escribe aquí lo que más te marcó de este año: un momento, un viaje,
+          algo que ella hizo por ti o algo que aprendieron juntos.
         </p>
         <p>
-          PD: Dejaré este espacio y sitio web para ir actualizando las cosas romanticas que me gusta escribir y retomar ese habito que tenía.
+          [Ejemplo] Y cierra con lo que quieres para el año que viene.
         </p>
         <p class="carta-firma">&mdash; Mateo</p>
       </article>
 
     </div>
+  </section>
+
+  <!-- ============ CIERRE ============ -->
+  <section class="cierre aparece">
+    <svg class="planta" viewBox="0 0 80 100" aria-label="La planta en la bota">
+      <path d="M40 12 C 40 26 39 34 39 46" stroke="#58c472" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M40 22 C 32 18 28 12 27 6 C 35 7 40 13 40 22 Z" fill="#58c472"/>
+      <path d="M40 22 C 48 18 52 12 53 6 C 45 7 40 13 40 22 Z" fill="#4aa861"/>
+      <path d="M28 44 L 52 44 L 50 78 L 30 78 Z" fill="#5b4632"/>
+      <path d="M30 70 L 62 70 Q 66 70 66 76 L 66 84 Q 66 88 62 88 L 30 88 Z" fill="#6b5340"/>
+      <rect x="27" y="40" width="26" height="7" rx="3" fill="#7a6049"/>
+    </svg>
+    <p class="mensaje">
+      <!-- EDITA AQUI (2/3): escribe tu mensaje final. El tiempo
+           ("este año", "estos 13 meses"...) se calcula solo. -->
+      Como la planta en la bota: en medio de todo,
+      esto sigue creciendo. Gracias por <span id="cierreTiempo">este tiempo</span>.
+    </p>
+    <!-- EDITA AQUI (3/3): tu firma -->
+    <p class="firma">&mdash; Machape</p>
   </section>
 
 </main>
@@ -1007,7 +1089,7 @@
    ========================================================== */
 
 // Fecha de inicio de la relacion: anio, mes (1-12), dia.
-// 14 de mayo de 2025 = 14 meses al 14 de junio de 2026.
+// 14 de noviembre de 2025 = un año el 14 de noviembre de 2026.
 const FECHA_INICIO = new Date(2025, 11 - 1, 14);
 
 // Fotos de la galeria. Guarda tus fotos en la carpeta "fotos/"
@@ -1038,22 +1120,71 @@ const CLAVE = "1407";
 const PISTA = "Combinación de nuestros números favoritos";
 
 // EDITA AQUI (6/6): el gran dia y los planes de los dias previos.
-// Antes de esta fecha la pagina pregunta por el dia de hoy, muestra
-// el plan del dia y una cuenta regresiva; la galeria, el mensaje
-// final y la carta quedan bloqueados hasta esa fecha.
-const FECHA_EVENTO = new Date(2026, 6 - 1, 14);
+// Antes de esta fecha la pagina muestra el plan del dia y una cuenta
+// regresiva; la carta y el mensaje final quedan bloqueados hasta ese
+// dia (la galeria, la playlist y la bitacora siguen visibles).
+const FECHA_EVENTO = new Date(2026, 11 - 1, 14);
+
+// Pregunta de entrada del gran dia. Los otros dias se pregunta por
+// el dia de la semana ("¿Quieres pasar este martes conmigo?").
+const PREGUNTA_GRAN_DIA = "¿Quieres empezar nuestro segundo año conmigo?";
 
 // Mensajes por dia (formato "AAAA-MM-DD"). Los dias que no esten
 // en la lista usan el mensaje generico de mas abajo.
+// TEXTOS DE EJEMPLO: cambialos por los tuyos.
 const MENSAJES_DIA = {
-  "2026-06-14": "Hoy cumplimos 7 meses. Se celebra como corresponde.",
-  "2026-07-13": "Mañana es el gran día. Preparar la torta y planear.",
+  "2026-10-14": "Hoy cumplimos 11 meses. Falta uno para la vuelta completa al sol.",
+  "2026-11-07": "Una semana para el año. Ya tengo una idea, pero no te la voy a contar.",
+  "2026-11-13": "Mañana es el gran día. Hoy toca descansar, mañana toca celebrar.",
+  "2026-11-14": "Un año. Hoy se celebra como corresponde.",
 };
 const MENSAJE_GENERICO = "Hoy también te elijo. Plan simple: estar juntos. TEAmo";
+
+// Bitacora: cosas que le escribes. Cada entrada tiene fecha
+// ("AAAA-MM-DD"), titulo y una lista de parrafos. Se muestran de la
+// mas nueva a la mas antigua, y una entrada con fecha futura queda
+// escondida hasta ese dia (sirve para dejarlas programadas).
+const ENTRADAS = [
+  {
+    fecha: "2026-06-14",
+    titulo: "Siete meses",
+    parrafos: [
+      "Ayleen:",
+      "Ya son siete meses pololeando; considerando lo que estuvimos saliendo, son casi 10 meses que nos hemos estado conociendo. El tiempo genuinamente ha pasado muy rápido.",
+      "TEAmo mucho, corazón. De verdad quiero que estemos una vida juntos: diciendo tonteras, haciendo recetas, viendo series y pelis que nos gustan, y seguir siendo el compañero del otro. Esta última idea es la que me motiva a seguir desafiándome a diario, amor. Me encantas; ojalá te guste la idea del sitio web, que pueda ser un pequeño blog de ambos.",
+      "PD: Dejaré este espacio para ir escribiendo las cosas románticas que me gusta escribir y retomar ese hábito que tenía.",
+    ],
+  },
+  // Para escribir otra entrada, copia el bloque de arriba (desde {
+  // hasta },) aqui abajo y cambia la fecha, el titulo y los parrafos.
+];
+
+// Cuantas entradas se ven de entrada (el resto con "ver anteriores").
+const ENTRADAS_VISIBLES = 3;
 
 /* ==========================================================
    De aqui hacia abajo no hace falta tocar nada
    ========================================================== */
+
+// ----- Tiempo en palabras: "10 meses", "1 año", "1 año y 2 meses" -----
+function textoTiempo(meses, dias) {
+  if (meses < 1) return dias === 1 ? "1 día" : dias + " días";
+  if (meses < 12) return meses === 1 ? "1 mes" : meses + " meses";
+  const anios = Math.floor(meses / 12);
+  const resto = meses % 12;
+  const txtAnios = anios === 1 ? "1 año" : anios + " años";
+  if (resto === 0) return txtAnios;
+  return txtAnios + " y " + (resto === 1 ? "1 mes" : resto + " meses");
+}
+
+// "estos 10 meses", "este año", "estos 2 años", "estos 13 meses"
+function fraseCierre(meses, dias) {
+  if (meses === 12) return "este año";
+  if (meses >= 24 && meses % 12 === 0) return "estos " + meses / 12 + " años";
+  if (meses === 1) return "este mes";
+  if (meses >= 2) return "estos " + meses + " meses";
+  return dias === 1 ? "este día" : "estos " + dias + " días";
+}
 
 // ----- Contador en vivo -----
 function actualizarContador() {
@@ -1082,13 +1213,11 @@ function actualizarContador() {
   document.getElementById("cMin").textContent = min;
   document.getElementById("cSeg").textContent = seg;
 
-  // Frase de la portada, calculada con la misma fecha
-  const lema = document.getElementById("lemaTiempo");
-  if (meses >= 1) {
-    lema.textContent = meses === 1 ? "1 mes" : meses + " meses";
-  } else {
-    lema.textContent = dias === 1 ? "1 día" : dias + " días";
-  }
+  // Frase de la portada, titulo de la pestaña y mensaje final
+  const tiempo = textoTiempo(meses, dias);
+  document.getElementById("lemaTiempo").textContent = tiempo;
+  document.title = "Directiva: " + tiempo;
+  document.getElementById("cierreTiempo").textContent = fraseCierre(meses, dias);
 
   // Chip superior: numero de registro y fecha del ultimo mesiversario
   document.getElementById("chipRegistro").textContent = meses;
@@ -1146,6 +1275,73 @@ if (idPlaylist) {
   document.getElementById("playlistMarco").appendChild(marcoPlaylist);
 } else {
   document.getElementById("playlist").remove();
+}
+
+// ----- Bitacora -----
+function crearEntrada(entrada) {
+  const art = document.createElement("article");
+  art.className = "entrada";
+
+  const [a, m, d] = entrada.fecha.split("-");
+  const fecha = document.createElement("span");
+  fecha.className = "entrada-fecha";
+  fecha.textContent = "REGISTRO " + d + "." + m + "." + a;
+
+  const titulo = document.createElement("h3");
+  titulo.textContent = entrada.titulo;
+  art.append(fecha, titulo);
+
+  const parrafos = entrada.parrafos || [];
+  const primero = document.createElement("p");
+  primero.textContent = parrafos[0] || "";
+  art.appendChild(primero);
+
+  if (parrafos.length > 1) {
+    const resto = document.createElement("div");
+    resto.className = "entrada-resto";
+    resto.hidden = true;
+    parrafos.slice(1).forEach((texto) => {
+      const p = document.createElement("p");
+      p.textContent = texto;
+      resto.appendChild(p);
+    });
+    const toggle = document.createElement("button");
+    toggle.className = "entrada-toggle";
+    toggle.textContent = "LEER MÁS ▾";
+    toggle.addEventListener("click", () => {
+      resto.hidden = !resto.hidden;
+      toggle.textContent = resto.hidden ? "LEER MÁS ▾" : "LEER MENOS ▴";
+    });
+    art.append(resto, toggle);
+  }
+  return art;
+}
+
+const listaBitacora = document.getElementById("bitacoraLista");
+const hoyClave = claveFecha(new Date());
+const entradasPublicadas = ENTRADAS
+  .filter((e) => e.fecha <= hoyClave)
+  .sort((x, y) => y.fecha.localeCompare(x.fecha));
+
+if (entradasPublicadas.length === 0) {
+  listaBitacora.innerHTML = '<p class="bitacora-vacia">&gt; bitácora vacía por ahora</p>';
+} else {
+  entradasPublicadas.forEach((entrada, i) => {
+    const art = crearEntrada(entrada);
+    if (i >= ENTRADAS_VISIBLES) art.hidden = true;
+    listaBitacora.appendChild(art);
+  });
+  const ocultas = entradasPublicadas.length - ENTRADAS_VISIBLES;
+  if (ocultas > 0) {
+    const mas = document.createElement("button");
+    mas.className = "bitacora-mas";
+    mas.textContent = "VER " + ocultas + (ocultas === 1 ? " ANTERIOR" : " ANTERIORES");
+    mas.addEventListener("click", () => {
+      listaBitacora.querySelectorAll(".entrada[hidden]").forEach((el) => { el.hidden = false; });
+      mas.remove();
+    });
+    listaBitacora.appendChild(mas);
+  }
 }
 
 // ----- Estrellas de fondo -----
@@ -1209,7 +1405,9 @@ const btnMusica = document.getElementById("btnMusica");
 const audio = new Audio(MUSICA);
 audio.loop = true;
 audio.volume = VOLUMEN;
-audio.preload = "auto";
+// "metadata" baja solo el encabezado del mp3 (asi se sabe si existe);
+// la cancion completa se descarga recien al tocar el boton
+audio.preload = "metadata";
 
 // Si el archivo no existe (todavia no lo agregas), el boton se esconde
 audio.addEventListener("error", () => {
@@ -1352,21 +1550,21 @@ const hoySoloFecha = new Date(ahoraCarga.getFullYear(), ahoraCarga.getMonth(), a
 const esGranDia = hoySoloFecha >= FECHA_EVENTO;
 const seccionPrevia = document.getElementById("previa");
 
-// La pregunta de entrada se renueva todos los dias
+// La pregunta de entrada se renueva todos los dias; el gran dia
+// tiene su propia pregunta
 const nombreDia = ahoraCarga.toLocaleDateString("es-CL", { weekday: "long" });
+const esElDiaExacto = claveFecha(ahoraCarga) === claveFecha(FECHA_EVENTO);
 document.querySelector(".intro-pregunta").textContent =
+  esElDiaExacto && PREGUNTA_GRAN_DIA ? PREGUNTA_GRAN_DIA :
   "¿Quieres pasar este " + nombreDia + " conmigo?";
 
 if (esGranDia) {
   // El gran dia: se muestra todo y la seccion de dias previos desaparece
   seccionPrevia.remove();
 } else {
-  // Dias previos: galeria, playlist, mensaje final y carta quedan bloqueados
-  document.getElementById("galeria").hidden = true;
+  // Dias previos: la carta y el mensaje final quedan bloqueados
   document.getElementById("carta").hidden = true;
   document.querySelector(".cierre").hidden = true;
-  const seccionPlaylist = document.getElementById("playlist");
-  if (seccionPlaylist) seccionPlaylist.hidden = true;
 
   // Titulo con la fecha y mensaje del dia
   const tituloDia = ahoraCarga.toLocaleDateString("es-CL", { weekday: "long", day: "numeric", month: "long" });
