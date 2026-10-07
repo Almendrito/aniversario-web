@@ -1,10 +1,47 @@
 <!DOCTYPE html>
+<!--
+  index.html - Pagina de aniversario de Mateo y Ayleen (WALL-E y EVA)
+
+  Que hace:
+    Pregunta de entrada, contador del tiempo juntos, cuenta regresiva al
+    proximo aniversario, linea de tiempo, galeria con visor de fotos,
+    playlist, bitacora, mensajes privados, carta con clave y cierre.
+
+  Como se ve:
+    Publicada en https://almendrito.github.io/aniversario-web/
+    En el PC basta con abrir este archivo con doble clic (los mensajes
+    necesitan internet).
+
+  Que necesita:
+    - fotos/ con las fotos de la galeria y de la linea de tiempo
+    - musica/cancion.mp3 para el boton de musica
+    - img/vista-previa.png, la imagen que aparece al mandar el link
+    - supabase/schema.sql ejecutado una vez en Supabase (para mensajes)
+
+  Que se edita:
+    Todo lo personal esta en el bloque CONFIGURACION del <script> de
+    abajo y en los comentarios "EDITA AQUI" del HTML.
+-->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Directiva: Ayleen</title>
 <meta name="description" content="Dos robots distintos, una misma neurona">
+<!-- Vista previa al compartir el link (WhatsApp, Instagram, etc.).
+     Las direcciones tienen que ser completas, con https. -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Directiva: Ayleen">
+<meta property="og:description" content="Dos robots distintos, una misma neurona.">
+<meta property="og:url" content="https://almendrito.github.io/aniversario-web/">
+<meta property="og:image" content="https://almendrito.github.io/aniversario-web/img/vista-previa.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<!-- Color de la barra del navegador en el celular -->
+<meta name="theme-color" content="#0b0f1a">
+<!-- Icono de la pestaña: la planta en la bota, dibujada en SVG -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 100'%3E%3Cpath d='M40 12 C 40 26 39 34 39 46' stroke='%2358c472' stroke-width='5' fill='none'/%3E%3Cpath d='M40 22 C 32 18 28 12 27 6 C 35 7 40 13 40 22 Z' fill='%2358c472'/%3E%3Cpath d='M40 22 C 48 18 52 12 53 6 C 45 7 40 13 40 22 Z' fill='%234aa861'/%3E%3Cpath d='M24 44 L 56 44 L 53 92 L 27 92 Z' fill='%23a8742f'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -75,6 +112,9 @@
   /* ---------- Hero ---------- */
   .hero {
     min-height: 100vh;
+    /* svh = alto real de la pantalla en el celular, descontando la barra
+       del navegador; los navegadores que no lo conocen usan el 100vh */
+    min-height: 100svh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -353,6 +393,181 @@
     font-size: 0.95rem;
     font-weight: 500;
   }
+
+  /* Las fotos que si cargaron se pueden abrir en grande */
+  .archivo.con-foto { cursor: zoom-in; }
+
+  /* ---------- Linea de tiempo ---------- */
+  .trayectoria {
+    position: relative;
+    max-width: 720px;
+    margin: 0 auto;
+    /* espacio a la izquierda para la linea punteada y los puntos */
+    padding-left: 2.4rem;
+  }
+
+  /* La linea punteada vertical que une los hitos, como el trayecto
+     entre WALL-E y EVA en la portada */
+  .trayectoria::before {
+    content: "";
+    position: absolute;
+    left: 0.62rem;
+    top: 0.6rem;
+    bottom: 0.6rem;
+    border-left: 2px dashed rgba(255, 255, 255, 0.22);
+  }
+
+  .hito {
+    position: relative;
+    background: var(--panel);
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    padding: 1.3rem 1.5rem;
+    margin-bottom: 1.6rem;
+    backdrop-filter: blur(6px);
+  }
+
+  .hito:last-child { margin-bottom: 0; }
+
+  /* Punto sobre la linea; cian para los hitos pares (EVA) y ambar para
+     los impares (WALL-E) */
+  .hito-punto {
+    position: absolute;
+    left: -2.25rem;
+    top: 1.45rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    border-radius: 50%;
+    background: var(--espacio);
+    border: 2px solid var(--cian);
+    box-shadow: 0 0 12px rgba(77, 216, 255, 0.4);
+  }
+
+  .hito.walle .hito-punto {
+    border-color: var(--ambar);
+    box-shadow: 0 0 12px rgba(217, 142, 50, 0.4);
+  }
+
+  .hito-fecha {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
+    color: var(--cian);
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  .hito.walle .hito-fecha { color: var(--ambar); }
+
+  .hito h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+  }
+
+  .hito p {
+    margin-top: 0.5rem;
+    line-height: 1.75;
+    color: var(--texto-suave);
+  }
+
+  .hito-foto {
+    display: block;
+    margin-top: 0.9rem;
+    width: min(240px, 100%);
+    aspect-ratio: 4 / 3;
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    overflow: hidden;
+    padding: 0;
+    background: var(--espacio-2);
+    cursor: zoom-in;
+  }
+
+  .hito-foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* ---------- Visor de fotos (pantalla completa) ---------- */
+  .visor {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 1rem 1.5rem;
+    background: rgba(5, 8, 15, 0.95);
+    backdrop-filter: blur(4px);
+  }
+
+  /* Sin esta regla el display:flex de arriba le gana al atributo
+     hidden y el visor nunca se esconderia */
+  .visor[hidden] { display: none; }
+
+  .visor-img {
+    max-width: min(92vw, 1100px);
+    max-height: 70vh;
+    max-height: 70svh;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  }
+
+  .visor-info {
+    margin-top: 1.1rem;
+    max-width: 620px;
+    text-align: center;
+  }
+
+  .visor-codigo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
+    color: var(--ambar);
+  }
+
+  .visor-pie {
+    margin-top: 0.3rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+
+  .visor-detalle {
+    margin-top: 0.4rem;
+    line-height: 1.7;
+    color: var(--texto-suave);
+  }
+
+  .visor-btn {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(17, 23, 38, 0.85);
+    border: 1px solid var(--borde);
+    color: var(--texto);
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color 0.3s;
+  }
+
+  .visor-btn:hover { border-color: rgba(77, 216, 255, 0.55); }
+
+  .visor-cerrar { top: 1rem; right: 1rem; }
+
+  .visor-anterior,
+  .visor-siguiente {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .visor-anterior { left: 0.8rem; }
+  .visor-siguiente { right: 0.8rem; }
 
   /* ---------- Playlist ---------- */
   .playlist-marco {
@@ -657,6 +872,16 @@
     font-size: 0.68rem;
     letter-spacing: 0.22em;
     color: var(--texto-suave);
+  }
+
+  /* ---------- Foco con teclado ----------
+     Un borde cian alrededor del boton o tarjeta que esta seleccionado
+     con la tecla Tab. Con el mouse o el dedo no aparece. */
+  button:focus-visible,
+  a:focus-visible,
+  [role="button"]:focus-visible {
+    outline: 2px solid var(--cian);
+    outline-offset: 3px;
   }
 
   /* ---------- Aparicion al hacer scroll ---------- */
@@ -1030,6 +1255,25 @@
     border-radius: 10px;
     padding: 0.8rem 1.2rem;
   }
+
+  /* ---------- Menos movimiento ----------
+     Si el celular o el PC tiene activada la opcion "reducir movimiento"
+     (accesibilidad), se apagan las animaciones: las estrellas quedan
+     quietas, las secciones aparecen de una y no hay estrellas fugaces
+     (esas las controla el script). */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+
+    .estrella { opacity: 0.6; }
+
+    .aparece { opacity: 1; transform: none; }
+  }
 </style>
 </head>
 <body>
@@ -1164,6 +1408,15 @@
     </div>
   </section>
 
+  <!-- ============ LINEA DE TIEMPO (los hitos se editan en HITOS, abajo) ============ -->
+  <section id="trayectoria" class="aparece">
+    <div class="encabezado">
+      <span class="etiqueta-seccion">Bit&aacute;cora de vuelo</span>
+      <h2 class="titulo-seccion">Nuestra trayectoria</h2>
+    </div>
+    <div class="trayectoria" id="trayectoriaLista"></div>
+  </section>
+
   <!-- ============ GALERIA ============ -->
   <section id="galeria" class="aparece">
     <div class="encabezado">
@@ -1243,7 +1496,9 @@
     </div>
     <div class="carta-zona">
 
-      <div class="sobre" id="sobre" title="Abrir la carta">
+      <!-- role y tabindex hacen que el sobre se pueda abrir con el
+           teclado (Tab para llegar, Enter o espacio para abrir) -->
+      <div class="sobre" id="sobre" title="Abrir la carta" role="button" tabindex="0" aria-label="Abrir la carta">
         <svg class="sobre-svg" viewBox="0 0 240 150">
           <rect x="4" y="4" width="232" height="142" rx="10" fill="#111726" stroke="rgba(217,142,50,0.55)" stroke-width="2"/>
           <path d="M 14 146 L 120 76 L 226 146" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
@@ -1313,6 +1568,20 @@
 
 </main>
 
+<!-- Visor: muestra una foto en grande, sin recortar. Se abre al tocar
+     una foto de la galeria o de la linea de tiempo. -->
+<div class="visor" id="visor" hidden role="dialog" aria-modal="true" aria-label="Foto en grande">
+  <button class="visor-btn visor-cerrar" id="visorCerrar" type="button" aria-label="Cerrar">&times;</button>
+  <button class="visor-btn visor-anterior" id="visorAnterior" type="button" aria-label="Foto anterior">&#8249;</button>
+  <img class="visor-img" id="visorImg" alt="">
+  <div class="visor-info">
+    <div class="visor-codigo" id="visorCodigo"></div>
+    <div class="visor-pie" id="visorPie"></div>
+    <p class="visor-detalle" id="visorDetalle" hidden></p>
+  </div>
+  <button class="visor-btn visor-siguiente" id="visorSiguiente" type="button" aria-label="Foto siguiente">&#8250;</button>
+</div>
+
 <!-- Boton flotante de musica (se oculta solo si no encuentra la cancion) -->
 <button class="btn-musica" id="btnMusica" title="Reproducir nuestra cancion" aria-label="Reproducir musica">
   <span class="barras"><span></span><span></span><span></span><span></span></span>
@@ -1331,6 +1600,9 @@ const FECHA_INICIO = new Date(2025, 11 - 1, 14);
 // Fotos de la galeria. Guarda tus fotos en la carpeta "fotos/"
 // con estos nombres (o cambia los nombres aqui) y escribe el
 // pie de foto que quieras para cada una.
+// Opcional: agrega detalle: "..." a una foto para escribir algo mas
+// largo, que aparece solo al abrirla en grande. Ejemplo:
+//   { src: "fotos/1.jpeg", pie: "Donde todo empezo", detalle: "Ese dia..." },
 const FOTOS = [
   { src: "fotos/1.jpeg", pie: "Donde todo empezo" },
   { src: "fotos/2.jpeg", pie: "Nuestra primera salida" },
@@ -1357,9 +1629,52 @@ const PISTA = "Combinación de nuestros números favoritos";
 
 // EDITA AQUI (6/6): el gran dia y los planes de los dias previos.
 // Antes de esta fecha la pagina muestra el plan del dia y una cuenta
-// regresiva; la carta y el mensaje final quedan bloqueados hasta ese
-// dia (la galeria, la playlist y la bitacora siguen visibles).
+// regresiva; la linea de tiempo, la carta y el mensaje final quedan
+// bloqueados hasta ese dia (la galeria, la playlist, la bitacora y
+// los mensajes siguen visibles).
 const FECHA_EVENTO = new Date(2026, 11 - 1, 14);
+
+// Linea de tiempo: los momentos importantes, del mas antiguo al mas
+// nuevo. Cada hito tiene:
+//   fecha  "AAAA-MM-DD"
+//   titulo una frase corta
+//   texto  una o dos frases (puede ir vacio: "")
+//   foto   ruta de una foto (puede ir vacia: ""); al tocarla se abre en grande
+// Un hito con fecha futura queda escondido hasta ese dia.
+// TEXTOS DE EJEMPLO: los que dicen [Ejemplo] tienen fecha inventada;
+// cambialos por los de verdad.
+const HITOS = [
+  {
+    fecha: "2025-09-01",
+    titulo: "[Ejemplo] Primera salida",
+    texto: "[Ejemplo] Cambia la fecha y cuenta adónde fueron.",
+    foto: "fotos/2.jpeg",
+  },
+  {
+    fecha: "2025-11-14",
+    titulo: "Directiva aceptada",
+    texto: "Empezamos a pololear.",
+    foto: "fotos/1.jpeg",
+  },
+  {
+    fecha: "2026-02-01",
+    titulo: "[Ejemplo] Primer viaje juntos",
+    texto: "[Ejemplo] Adónde fueron y qué es lo que más recuerdas.",
+    foto: "fotos/3.jpeg",
+  },
+  {
+    fecha: "2026-06-14",
+    titulo: "Siete meses",
+    texto: "Nació esta página.",
+    foto: "",
+  },
+  {
+    fecha: "2026-11-14",
+    titulo: "Un año",
+    texto: "La primera vuelta completa al sol.",
+    foto: "",
+  },
+];
 
 // Pregunta de entrada del gran dia. Los otros dias se pregunta por
 // el dia de la semana ("¿Quieres pasar este martes conmigo?").
@@ -1471,41 +1786,477 @@ function actualizarContador() {
 actualizarContador();
 setInterval(actualizarContador, 1000);
 
-// ----- Galeria -----
-const grid = document.getElementById("galeriaGrid");
-FOTOS.forEach((foto, i) => {
-  const card = document.createElement("figure");
-  card.className = "archivo";
+// ----- Utilidades chicas -----
 
+/**
+ * Escribe un numero con ceros a la izquierda hasta 3 cifras: 7 -> "007".
+ *
+ * Parametros:
+ *   numero  entero positivo
+ *
+ * Retorna:
+ *   el texto con 3 cifras (si el numero tiene mas, queda igual)
+ */
+function conTresCifras(numero) {
+  return String(numero).padStart(3, "0");
+}
+
+/**
+ * Dice si una tecla es de las que "aprietan" un boton: Enter o espacio.
+ * Sirve para que las tarjetas y el sobre se abran tambien con teclado.
+ *
+ * Parametros:
+ *   evento  el evento "keydown" del navegador
+ *
+ * Retorna:
+ *   true si la tecla es Enter o espacio, false si es otra
+ */
+function esTeclaDeActivar(evento) {
+  if (evento.key === "Enter" || evento.key === " ") {
+    return true;
+  }
+  return false;
+}
+
+// ----- Visor de fotos -----
+// Muestra una foto en grande, sin recortar, con su pie y un texto mas
+// largo opcional. Se puede pasar de una foto a otra con las flechas de
+// la pantalla, las del teclado o deslizando el dedo en el celular.
+
+// Distancia minima que tiene que recorrer el dedo para contar como
+// deslizamiento y no como un toque, en pixeles.
+const DESLIZAMIENTO_MINIMO_PX = 50;
+
+const visor = {
+  caja: document.getElementById("visor"),
+  imagen: document.getElementById("visorImg"),
+  codigo: document.getElementById("visorCodigo"),
+  pie: document.getElementById("visorPie"),
+  detalle: document.getElementById("visorDetalle"),
+  cerrar: document.getElementById("visorCerrar"),
+  anterior: document.getElementById("visorAnterior"),
+  siguiente: document.getElementById("visorSiguiente"),
+};
+
+// Fotos que se estan mirando. Cada una es un objeto con src, pie,
+// detalle y codigo (el texto chico de arriba, ej. "ARCHIVO 002 / 006").
+let fotosDelVisor = [];
+// Posicion, dentro de fotosDelVisor, de la foto que se ve ahora
+let posicionEnVisor = 0;
+// Lo que estaba seleccionado antes de abrir el visor, para devolverle
+// el foco al cerrar (asi quien usa teclado no pierde su lugar)
+let elementoAntesDelVisor = null;
+// Donde empezo el toque del dedo, en pixeles desde la izquierda
+let toqueInicialX_px = null;
+
+/**
+ * Abre el visor mostrando una lista de fotos.
+ *
+ * Parametros:
+ *   listaDeFotos     arreglo de objetos con src, pie, detalle y codigo
+ *   posicionInicial  cual foto de la lista se muestra primero (desde 0)
+ */
+function abrirVisor(listaDeFotos, posicionInicial) {
+  // Paso 1: guardar que fotos se van a mirar y desde cual
+  fotosDelVisor = listaDeFotos;
+  posicionEnVisor = posicionInicial;
+  elementoAntesDelVisor = document.activeElement;
+
+  // Paso 2: las flechas solo tienen sentido si hay mas de una foto
+  const hayVariasFotos = listaDeFotos.length > 1;
+  visor.anterior.hidden = !hayVariasFotos;
+  visor.siguiente.hidden = !hayVariasFotos;
+
+  // Paso 3: mostrar la foto y bloquear el scroll de la pagina de atras
+  mostrarFotoDelVisor();
+  visor.caja.hidden = false;
+  document.body.style.overflow = "hidden";
+  visor.cerrar.focus();
+}
+
+/**
+ * Pone en el visor la foto que corresponde a posicionEnVisor:
+ * la imagen, su codigo, su pie y el detalle si tiene.
+ */
+function mostrarFotoDelVisor() {
+  const foto = fotosDelVisor[posicionEnVisor];
+  visor.imagen.src = foto.src;
+  visor.imagen.alt = foto.pie;
+  visor.codigo.textContent = foto.codigo;
+  visor.pie.textContent = foto.pie;
+
+  // El detalle es opcional: si no hay, el parrafo se esconde
+  if (foto.detalle) {
+    visor.detalle.textContent = foto.detalle;
+    visor.detalle.hidden = false;
+  } else {
+    visor.detalle.hidden = true;
+  }
+}
+
+/**
+ * Pasa a otra foto del visor. Al llegar al final vuelve a la primera
+ * y al reves.
+ *
+ * Parametros:
+ *   paso  +1 para la siguiente, -1 para la anterior
+ */
+function moverVisor(paso) {
+  const cantidad = fotosDelVisor.length;
+  // Se suma "cantidad" antes del resto para que -1 en la primera foto
+  // de la ultima y no un numero negativo
+  posicionEnVisor = (posicionEnVisor + paso + cantidad) % cantidad;
+  mostrarFotoDelVisor();
+}
+
+/**
+ * Cierra el visor, devuelve el scroll a la pagina y el foco a donde
+ * estaba antes de abrirlo.
+ */
+function cerrarVisor() {
+  // Se suelta el foco del boton cerrar antes de esconderlo; si no habia
+  // nada seleccionado antes, el foco no queda en un boton invisible
+  visor.cerrar.blur();
+  visor.caja.hidden = true;
+  // Se vacia la imagen para que no aparezca la anterior un instante
+  // la proxima vez que se abra
+  visor.imagen.removeAttribute("src");
+  document.body.style.overflow = "";
+  if (elementoAntesDelVisor) {
+    elementoAntesDelVisor.focus();
+  }
+}
+
+/**
+ * Teclado mientras el visor esta abierto: Escape cierra, las flechas
+ * izquierda y derecha cambian de foto.
+ *
+ * Parametros:
+ *   evento  el evento "keydown" del navegador
+ */
+function manejarTeclaDelVisor(evento) {
+  if (visor.caja.hidden) {
+    return;
+  }
+  if (evento.key === "Escape") {
+    cerrarVisor();
+  } else if (evento.key === "ArrowRight" && fotosDelVisor.length > 1) {
+    moverVisor(1);
+  } else if (evento.key === "ArrowLeft" && fotosDelVisor.length > 1) {
+    moverVisor(-1);
+  }
+}
+
+/**
+ * Guarda donde empezo a tocar el dedo, para despues saber si deslizo.
+ *
+ * Parametros:
+ *   evento  el evento "touchstart" del navegador
+ */
+function empezarDeslizamiento(evento) {
+  toqueInicialX_px = evento.changedTouches[0].clientX;
+}
+
+/**
+ * Al levantar el dedo: si se movio lo suficiente hacia un lado, cambia
+ * de foto (hacia la izquierda = siguiente, como pasar una pagina).
+ *
+ * Parametros:
+ *   evento  el evento "touchend" del navegador
+ */
+function terminarDeslizamiento(evento) {
+  if (toqueInicialX_px === null || fotosDelVisor.length < 2) {
+    return;
+  }
+  const recorridoX_px = evento.changedTouches[0].clientX - toqueInicialX_px;
+  toqueInicialX_px = null;
+
+  if (recorridoX_px <= -DESLIZAMIENTO_MINIMO_PX) {
+    moverVisor(1);
+  } else if (recorridoX_px >= DESLIZAMIENTO_MINIMO_PX) {
+    moverVisor(-1);
+  }
+}
+
+/**
+ * Cierra el visor si se toca el fondo oscuro (no la foto ni los botones).
+ *
+ * Parametros:
+ *   evento  el evento "click" del navegador
+ */
+function cerrarVisorSiTocaElFondo(evento) {
+  if (evento.target === visor.caja) {
+    cerrarVisor();
+  }
+}
+
+visor.cerrar.addEventListener("click", cerrarVisor);
+visor.anterior.addEventListener("click", function () { moverVisor(-1); });
+visor.siguiente.addEventListener("click", function () { moverVisor(1); });
+visor.caja.addEventListener("click", cerrarVisorSiTocaElFondo);
+visor.caja.addEventListener("touchstart", empezarDeslizamiento, { passive: true });
+visor.caja.addEventListener("touchend", terminarDeslizamiento);
+document.addEventListener("keydown", manejarTeclaDelVisor);
+
+// ----- Galeria -----
+
+// Para cada foto de FOTOS se anota si cargo bien (true) o no (false).
+// El visor solo pasa por las que cargaron.
+const fotoCargo = [];
+
+/**
+ * Abre en el visor una foto de la galeria, con todas las demas fotos
+ * disponibles para pasar con las flechas.
+ *
+ * Parametros:
+ *   indiceElegido  posicion de la foto tocada dentro de FOTOS (desde 0)
+ */
+function abrirGaleriaEnVisor(indiceElegido) {
+  // Una foto que no existe no se puede abrir
+  if (!fotoCargo[indiceElegido]) {
+    return;
+  }
+
+  // Paso 1: armar la lista solo con las fotos que cargaron, recordando
+  // en que lugar de esa lista quedo la que se toco
+  const listaDeFotos = [];
+  let posicionElegida = 0;
+  for (let i = 0; i < FOTOS.length; i++) {
+    if (!fotoCargo[i]) {
+      continue;
+    }
+    if (i === indiceElegido) {
+      posicionElegida = listaDeFotos.length;
+    }
+    let detalle = "";
+    if (FOTOS[i].detalle) {
+      detalle = FOTOS[i].detalle;
+    }
+    listaDeFotos.push({
+      src: FOTOS[i].src,
+      pie: FOTOS[i].pie,
+      detalle: detalle,
+      codigo: "ARCHIVO " + conTresCifras(i + 1) + " / " + conTresCifras(FOTOS.length),
+    });
+  }
+
+  // Paso 2: abrir el visor en esa foto
+  abrirVisor(listaDeFotos, posicionElegida);
+}
+
+/**
+ * Arma la tarjeta de una foto de la galeria: la imagen recortada en
+ * cuadrado, su codigo ("ARCHIVO 001") y el pie de foto.
+ *
+ * Parametros:
+ *   foto    objeto de FOTOS, con src (ruta), pie (texto) y detalle opcional
+ *   indice  posicion de la foto en FOTOS, empezando en 0
+ *
+ * Retorna:
+ *   el elemento <figure> listo para agregar a la galeria. Si la imagen
+ *   no existe, la tarjeta muestra un aviso y deja de abrirse.
+ */
+function crearTarjetaFoto(foto, indice) {
+  // Paso 1: la tarjeta y el marco cuadrado donde va la imagen
+  const tarjeta = document.createElement("figure");
+  tarjeta.className = "archivo con-foto";
   const marco = document.createElement("div");
   marco.className = "marco";
 
-  const img = document.createElement("img");
-  img.src = foto.src;
-  img.alt = foto.pie;
-  img.loading = "lazy";
-  img.onerror = () => {
-    img.remove();
+  // Paso 2: la imagen. loading="lazy" hace que el navegador la baje
+  // recien cuando se acerca a la pantalla.
+  const imagen = document.createElement("img");
+  imagen.src = foto.src;
+  imagen.alt = foto.pie;
+  imagen.loading = "lazy";
+  fotoCargo[indice] = true;
+  marco.appendChild(imagen);
+
+  // Paso 3: si la foto no existe, aviso en vez de imagen y la tarjeta
+  // deja de comportarse como boton
+  imagen.addEventListener("error", function () {
+    fotoCargo[indice] = false;
+    tarjeta.classList.remove("con-foto");
+    tarjeta.removeAttribute("role");
+    tarjeta.removeAttribute("tabindex");
+    tarjeta.removeAttribute("aria-label");
     marco.innerHTML = '<div class="sin-foto"><span class="brote">&#127793;</span>' +
       "ARCHIVO NO ENCONTRADO<br>agrega <strong>" + foto.src + "</strong></div>";
-  };
+  });
 
+  // Paso 4: codigo y pie de foto debajo de la imagen
   const info = document.createElement("figcaption");
   info.className = "info";
   const codigo = document.createElement("span");
   codigo.className = "codigo";
-  codigo.textContent = "ARCHIVO " + String(i + 1).padStart(3, "0");
+  codigo.textContent = "ARCHIVO " + conTresCifras(indice + 1);
   const pie = document.createElement("div");
   pie.className = "pie";
   pie.textContent = foto.pie;
   info.appendChild(codigo);
   info.appendChild(pie);
 
-  marco.appendChild(img);
-  card.appendChild(marco);
-  card.appendChild(info);
-  grid.appendChild(card);
-});
+  // Paso 5: tocar la tarjeta, o Enter / espacio con teclado, la abre
+  // en grande. role y tabindex la hacen alcanzable con la tecla Tab.
+  tarjeta.setAttribute("role", "button");
+  tarjeta.tabIndex = 0;
+  tarjeta.setAttribute("aria-label", "Ver en grande: " + foto.pie);
+  tarjeta.addEventListener("click", function () {
+    abrirGaleriaEnVisor(indice);
+  });
+  tarjeta.addEventListener("keydown", function (evento) {
+    if (esTeclaDeActivar(evento)) {
+      evento.preventDefault();
+      abrirGaleriaEnVisor(indice);
+    }
+  });
+
+  tarjeta.appendChild(marco);
+  tarjeta.appendChild(info);
+  return tarjeta;
+}
+
+// Se arma una tarjeta por cada foto de FOTOS
+const grillaGaleria = document.getElementById("galeriaGrid");
+for (let i = 0; i < FOTOS.length; i++) {
+  grillaGaleria.appendChild(crearTarjetaFoto(FOTOS[i], i));
+}
+
+// ----- Linea de tiempo -----
+
+// Abreviaturas de los meses para las fechas de los hitos ("14 NOV 2025")
+const MESES_CORTOS = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN",
+                      "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
+
+/**
+ * Convierte una fecha "AAAA-MM-DD" al formato de los hitos: "14 NOV 2025".
+ *
+ * Parametros:
+ *   textoFecha  la fecha como texto, por ejemplo "2025-11-14"
+ *
+ * Retorna:
+ *   el texto listo para mostrar
+ */
+function formatearFechaHito(textoFecha) {
+  const partes = textoFecha.split("-");
+  const anio = partes[0];
+  const numeroDeMes = Number(partes[1]);   // 1 = enero ... 12 = diciembre
+  const dia = Number(partes[2]);           // Number quita el cero: "01" -> 1
+  return dia + " " + MESES_CORTOS[numeroDeMes - 1] + " " + anio;
+}
+
+/**
+ * Compara dos hitos por fecha, para ordenarlos del mas antiguo al mas
+ * nuevo. Las fechas "AAAA-MM-DD" se pueden comparar como texto porque
+ * el año va primero y los meses y dias siempre tienen dos cifras.
+ *
+ * Parametros:
+ *   hitoA, hitoB  dos objetos de HITOS
+ *
+ * Retorna:
+ *   un numero negativo si hitoA va antes, positivo si va despues, 0 si
+ *   tienen la misma fecha (es lo que pide sort)
+ */
+function compararHitosPorFecha(hitoA, hitoB) {
+  return hitoA.fecha.localeCompare(hitoB.fecha);
+}
+
+/**
+ * Arma la tarjeta de un hito: punto sobre la linea, fecha, titulo,
+ * texto y foto (estos dos ultimos solo si tiene).
+ *
+ * Parametros:
+ *   hito    objeto de HITOS (fecha, titulo, texto, foto)
+ *   indice  posicion del hito en la linea, desde 0; los pares van en
+ *           cian (EVA) y los impares en ambar (WALL-E)
+ *
+ * Retorna:
+ *   el elemento <article> listo para agregar a la linea de tiempo
+ */
+function crearHito(hito, indice) {
+  // Paso 1: la tarjeta, con el color que le toca
+  const tarjeta = document.createElement("article");
+  tarjeta.className = "hito";
+  if (indice % 2 === 1) {
+    tarjeta.classList.add("walle");
+  }
+
+  // Paso 2: el punto sobre la linea punteada, la fecha y el titulo
+  const punto = document.createElement("span");
+  punto.className = "hito-punto";
+  const fecha = document.createElement("span");
+  fecha.className = "hito-fecha";
+  fecha.textContent = formatearFechaHito(hito.fecha);
+  const titulo = document.createElement("h3");
+  titulo.textContent = hito.titulo;
+  tarjeta.appendChild(punto);
+  tarjeta.appendChild(fecha);
+  tarjeta.appendChild(titulo);
+
+  // Paso 3: el texto, si tiene
+  if (hito.texto) {
+    const texto = document.createElement("p");
+    texto.textContent = hito.texto;
+    tarjeta.appendChild(texto);
+  }
+
+  // Paso 4: la foto, si tiene. Es un boton que la abre en el visor;
+  // si el archivo no existe, el boton desaparece sin dejar hueco.
+  if (hito.foto) {
+    const botonFoto = document.createElement("button");
+    botonFoto.className = "hito-foto";
+    botonFoto.type = "button";
+    botonFoto.setAttribute("aria-label", "Ver en grande: " + hito.titulo);
+    const imagen = document.createElement("img");
+    imagen.src = hito.foto;
+    imagen.alt = hito.titulo;
+    imagen.loading = "lazy";
+    imagen.addEventListener("error", function () {
+      botonFoto.remove();
+    });
+    botonFoto.addEventListener("click", function () {
+      abrirVisor([{
+        src: hito.foto,
+        pie: hito.titulo,
+        detalle: hito.texto,
+        codigo: "REGISTRO · " + formatearFechaHito(hito.fecha),
+      }], 0);
+    });
+    botonFoto.appendChild(imagen);
+    tarjeta.appendChild(botonFoto);
+  }
+
+  return tarjeta;
+}
+
+/**
+ * Dibuja la linea de tiempo con los hitos cuya fecha ya llego, del mas
+ * antiguo al mas nuevo. Si todavia no hay ninguno, la seccion se quita.
+ */
+function mostrarTrayectoria() {
+  // Paso 1: quedarse con los hitos de hoy o antes (los futuros esperan)
+  const hoy = claveFecha(new Date());
+  const hitosPublicados = [];
+  for (let i = 0; i < HITOS.length; i++) {
+    if (HITOS[i].fecha <= hoy) {
+      hitosPublicados.push(HITOS[i]);
+    }
+  }
+
+  // Paso 2: sin hitos no tiene sentido mostrar la seccion
+  if (hitosPublicados.length === 0) {
+    document.getElementById("trayectoria").remove();
+    return;
+  }
+
+  // Paso 3: ordenarlos por fecha y dibujarlos
+  hitosPublicados.sort(compararHitosPorFecha);
+  const lista = document.getElementById("trayectoriaLista");
+  for (let i = 0; i < hitosPublicados.length; i++) {
+    lista.appendChild(crearHito(hitosPublicados[i], i));
+  }
+}
+mostrarTrayectoria();
 
 // ----- Playlist de Spotify -----
 const idPlaylist = (PLAYLIST.match(/playlist\/([A-Za-z0-9]+)/) || [])[1];
@@ -1611,7 +2362,13 @@ function estrellaFugaz() {
   setTimeout(() => f.remove(), 1500);
   setTimeout(estrellaFugaz, 4000 + Math.random() * 6000);
 }
-setTimeout(estrellaFugaz, 2500);
+
+// true si el sistema tiene activado "reducir movimiento" (opcion de
+// accesibilidad); en ese caso no se lanzan estrellas fugaces
+const prefiereMenosMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+if (!prefiereMenosMovimiento) {
+  setTimeout(estrellaFugaz, 2500);
+}
 
 // ----- Aparicion suave al hacer scroll -----
 const observador = new IntersectionObserver((entradas) => {
@@ -1743,11 +2500,26 @@ const cartaPapel = document.getElementById("cartaPapel");
 let cartaAbierta = false;
 let intentosClave = 0;
 
-sobre.addEventListener("click", () => {
-  if (cartaAbierta) return;
+/**
+ * Al tocar el sobre (o apretar Enter / espacio sobre el con teclado)
+ * aparece el panel para escribir la clave.
+ */
+function abrirPanelDeClave() {
+  if (cartaAbierta) {
+    return;
+  }
   clavePanel.hidden = false;
   clavePanel.scrollIntoView({ behavior: "smooth", block: "center" });
   claveInput.focus({ preventScroll: true });
+}
+
+sobre.addEventListener("click", abrirPanelDeClave);
+sobre.addEventListener("keydown", function (evento) {
+  if (esTeclaDeActivar(evento)) {
+    // preventDefault evita que el espacio ademas baje la pagina
+    evento.preventDefault();
+    abrirPanelDeClave();
+  }
 });
 
 function probarClave() {
@@ -1781,6 +2553,13 @@ claveInput.addEventListener("keydown", (ev) => {
 });
 
 // ----- Mensajes -----
+// NOTA (herramienta avanzada): en esta parte se usan funciones "async"
+// y la palabra "await". Pedirle algo a Supabase toma tiempo (viaja por
+// internet), y "await" significa "espera aqui la respuesta antes de
+// seguir con la linea de abajo", sin congelar la pagina mientras tanto.
+// No hay otra forma: la libreria de Supabase solo responde asi. Para
+// leer esas lineas basta pensar que se ejecutan en orden, una tras otra.
+//
 // Cuentas por usuario, sin correo: Supabase exige un email, asi que
 // "ayleen" se traduce a ayleen@almendrito.github.io (mismo truco que
 // Mi Semana; ese dominio no recibe correo y nadie mas lo puede usar).
@@ -1820,7 +2599,7 @@ function mensajeError(err) {
   if (/Password should be at least/i.test(m)) return "> la contraseña necesita al menos 6 caracteres";
   if (/rate limit|too many/i.test(m)) return "> demasiados intentos: espera un momento";
   if (/no autorizada|row-level security/i.test(m)) return "> esta cuenta no tiene acceso al canal";
-  if (/Could not find the table|does not exist/i.test(m)) return "> falta ejecutar supabase/schema.sql";
+  if (/Could not find the (table|function)|does not exist/i.test(m)) return "> falta ejecutar supabase/schema.sql";
   if (/Failed to fetch|NetworkError|network/i.test(m)) return "> sin conexión";
   return "> " + (m || "error desconocido");
 }
@@ -2027,33 +2806,76 @@ async function autenticar(crear) {
   if (data.session) mostrarCanal(data.session);
 }
 
-if (window.supabase && SUPABASE_URL && SUPABASE_KEY) {
-  // storageKey propio: entrar o salir aqui no toca la sesion de Mi Semana
+// Codigo de error que devuelve Supabase cuando la tabla no existe
+// (es decir, cuando todavia no se ejecuta supabase/schema.sql)
+const ERROR_TABLA_NO_EXISTE = "PGRST205";
+
+/**
+ * Prepara la seccion de mensajes: crea la conexion con Supabase, revisa
+ * que la tabla exista, conecta los botones y, si ya habia una sesion
+ * abierta en este dispositivo, entra directo al canal.
+ *
+ * Casos especiales:
+ *   - Sin internet o sin la libreria de Supabase: muestra "canal fuera
+ *     de linea".
+ *   - Si todavia no se ejecuta supabase/schema.sql, la seccion completa
+ *     se esconde, para que nadie vea un formulario que no funciona.
+ */
+async function iniciarMensajes() {
+  // Paso 1: sin la libreria (por ejemplo, sin internet) no hay canal
+  if (!window.supabase || !SUPABASE_URL || !SUPABASE_KEY) {
+    msj.sinConexion.hidden = false;
+    return;
+  }
+
+  // Paso 2: conexion. storageKey propio para que entrar o salir aqui
+  // no toque la sesion de Mi Semana, que usa el mismo proyecto.
   sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
     auth: { storageKey: "aniversario-auth" },
   });
 
-  msj.formLogin.addEventListener("submit", (ev) => { ev.preventDefault(); autenticar(false); });
-  msj.crear.addEventListener("click", () => autenticar(true));
-  msj.enviar.addEventListener("click", () => enviarMensaje(msj.nuevo, msj.enviar, null));
+  // Paso 3: si la tabla no existe, esconder la seccion entera. Con la
+  // tabla creada, esta consulta sin sesion da "permiso denegado", que
+  // es lo esperado y deja la seccion visible.
+  const prueba = await sb.from("aniversario_mensajes").select("id").limit(1);
+  if (prueba.error && prueba.error.code === ERROR_TABLA_NO_EXISTE) {
+    document.getElementById("mensajes").hidden = true;
+    return;
+  }
+
+  // Paso 4: conectar los botones
+  msj.formLogin.addEventListener("submit", function (evento) {
+    evento.preventDefault();
+    autenticar(false);
+  });
+  msj.crear.addEventListener("click", function () {
+    autenticar(true);
+  });
+  msj.enviar.addEventListener("click", function () {
+    enviarMensaje(msj.nuevo, msj.enviar, null);
+  });
   msj.actualizar.addEventListener("click", cargarMensajes);
-  msj.salir.addEventListener("click", async () => {
+  msj.salir.addEventListener("click", async function () {
     await sb.auth.signOut();
     msj.lista.innerHTML = "";
     mostrarLogin();
   });
   // Al volver a la pestaña se traen los mensajes nuevos
-  document.addEventListener("visibilitychange", () => {
-    if (!document.hidden && miUid) cargarMensajes();
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden && miUid) {
+      cargarMensajes();
+    }
   });
 
-  sb.auth.getSession().then(({ data }) => {
-    if (data.session) mostrarCanal(data.session);
-    else mostrarLogin();
-  });
-} else {
-  msj.sinConexion.hidden = false;
+  // Paso 5: si ya habia sesion en este dispositivo, entrar directo
+  const respuesta = await sb.auth.getSession();
+  if (respuesta.data.session) {
+    mostrarCanal(respuesta.data.session);
+  } else {
+    mostrarLogin();
+  }
 }
+iniciarMensajes();
 
 // ----- Modo del dia: previa o gran dia -----
 function claveFecha(d) {
@@ -2079,7 +2901,13 @@ if (esGranDia) {
   // El gran dia: se muestra todo y la seccion de dias previos desaparece
   seccionPrevia.remove();
 } else {
-  // Dias previos: la carta y el mensaje final quedan bloqueados
+  // Dias previos: la linea de tiempo, la carta y el mensaje final
+  // quedan bloqueados (la linea de tiempo puede no existir si todavia
+  // no tiene hitos, por eso se revisa antes de esconderla)
+  const seccionTrayectoria = document.getElementById("trayectoria");
+  if (seccionTrayectoria) {
+    seccionTrayectoria.hidden = true;
+  }
   document.getElementById("carta").hidden = true;
   document.querySelector(".cierre").hidden = true;
 
