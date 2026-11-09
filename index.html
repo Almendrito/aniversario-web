@@ -53,6 +53,8 @@
      agregando ?fecha=AAAA-MM-DD al final de la direccion, por ejemplo:
        index.html?fecha=2026-11-14
        index.html?fecha=2026-11-13&hora=23:59   (para ver el cambio de dia)
+       index.html?fecha=2026-11-14&captura=1    (sin la pantalla de entrada,
+                                                para capturas de la pagina)
      En la pagina publicada (almendrito.github.io) esto no hace nada, asi
      que nadie puede adelantarse a la sorpresa con este truco. -->
 <script>
@@ -128,7 +130,23 @@ function activarFechaSimulada() {
   }
   window.Date = DateSimulada;
 
-  // Paso 5: una etiqueta visible para no olvidar que es una simulacion
+  // Paso 5: con &captura=1 se salta la pantalla de entrada y todas las
+  // secciones aparecen de una, para sacar capturas de la pagina entera
+  if (parametros.get("captura") === "1") {
+    const estiloCaptura = document.createElement("style");
+    estiloCaptura.textContent =
+      ".intro { display: none !important; }" +
+      "body { overflow: visible !important; }" +
+      ".aparece { opacity: 1 !important; transform: none !important; }" +
+      // la portada mide una pantalla de alto; en una captura muy alta
+      // quedaria gigante, asi que se deja con su alto natural
+      ".hero { min-height: 0 !important; }" +
+      ".btn-musica { display: none !important; }";
+    document.head.appendChild(estiloCaptura);
+    return;
+  }
+
+  // Paso 6: una etiqueta visible para no olvidar que es una simulacion
   document.addEventListener("DOMContentLoaded", function () {
     const etiqueta = document.createElement("div");
     etiqueta.textContent = "VISTA PREVIA · " + textoFecha;
@@ -1948,7 +1966,7 @@ const HITOS = [
   {
     fecha: "2026-05-03",
     titulo: "Primer viaje juntos",
-    texto: "",
+    texto: "Rumbo a las Termas El Médano.",
     foto: "fotos/hitos/2026-05-03.jpg",
   },
   {
