@@ -1,0 +1,24 @@
+Canciones de la linea de tiempo ("Nuestra trayectoria")
+
+Cada hito puede tener una cancion que suena al tocar su boton.
+Nombra cada archivo con la fecha de su hito:
+
+  2025-09-01.mp3
+  2025-11-14.mp3
+
+Despues, en index.html, en la lista HITOS, agrega al hito:
+
+  cancion: "musica/hitos/2025-11-14.mp3",
+  nombreCancion: "Nombre de la cancion · Artista",
+  desde: 45,        <- segundo en que parte (para empezar en el coro)
+
+Consejos:
+- Mejor un trozo de 30 a 60 segundos que la cancion entera: pesa
+  menos (menos de 1 MB) y va directo a la parte que importa.
+  Si recortas el trozo, deja desde: 0.
+- Formato .mp3 (funciona en todos los celulares).
+- Solo suena una a la vez: al tocar otra, la anterior se corta, y
+  tambien se pausa la musica de fondo.
+- Ojo: el repositorio es publico, asi que cualquiera puede descargar
+  estos archivos desde GitHub.
+- Si un archivo no existe, el boton de ese hito no aparece.

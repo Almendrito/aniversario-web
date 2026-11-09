@@ -1,0 +1,19 @@
+Fotos de la linea de tiempo ("Nuestra trayectoria")
+
+Nombra cada foto con la fecha de su hito, asi es facil saber cual es cual:
+
+  2025-09-01.jpg
+  2025-11-14.jpg
+  2026-02-01.jpg
+
+Despues, en index.html, en la lista HITOS, pon la ruta en el hito:
+
+  foto: "fotos/hitos/2025-11-14.jpg",
+
+Consejos:
+- Sirven .jpg, .jpeg, .png o .webp.
+- Que pese menos de 500 KB (unos 1500 px por lado). Las fotos del
+  celular pesan 4-5 MB y hacen lenta la pagina con datos moviles.
+  Puedes achicarlas en https://squoosh.app
+- La miniatura del hito se recorta en 4:3; al tocarla se ve completa.
+- Si un archivo no existe, el hito se muestra igual, sin foto.

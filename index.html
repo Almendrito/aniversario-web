@@ -4,17 +4,23 @@
 
   Que hace:
     Pregunta de entrada, contador del tiempo juntos, cuenta regresiva al
-    proximo aniversario, linea de tiempo, galeria con visor de fotos,
-    playlist, bitacora, mensajes privados, carta con clave y cierre.
+    proximo aniversario, linea de tiempo con fotos y canciones, galeria
+    con visor de fotos, playlist, bitacora, mensajes privados, carta con
+    clave y cierre. El dia del aniversario la entrada parte con una
+    explosion.
 
   Como se ve:
     Publicada en https://almendrito.github.io/aniversario-web/
     En el PC basta con abrir este archivo con doble clic (los mensajes
     necesitan internet).
 
+    Para ver como se vera otro dia (por ejemplo el aniversario), abrirla
+    en el PC con ?fecha=AAAA-MM-DD al final (ver "VISTA PREVIA" abajo).
+
   Que necesita:
-    - fotos/ con las fotos de la galeria y de la linea de tiempo
-    - musica/cancion.mp3 para el boton de musica
+    - fotos/ con las fotos de la galeria; fotos/hitos/ las de la linea de tiempo
+    - musica/cancion.mp3 para el boton de musica; musica/hitos/ las
+      canciones de la linea de tiempo (opcionales)
     - img/vista-previa.png, la imagen que aparece al mandar el link
     - supabase/schema.sql ejecutado una vez en Supabase (para mensajes)
 
@@ -42,6 +48,98 @@
 <meta name="theme-color" content="#0b0f1a">
 <!-- Icono de la pestaña: la planta en la bota, dibujada en SVG -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 100'%3E%3Cpath d='M40 12 C 40 26 39 34 39 46' stroke='%2358c472' stroke-width='5' fill='none'/%3E%3Cpath d='M40 22 C 32 18 28 12 27 6 C 35 7 40 13 40 22 Z' fill='%2358c472'/%3E%3Cpath d='M40 22 C 48 18 52 12 53 6 C 45 7 40 13 40 22 Z' fill='%234aa861'/%3E%3Cpath d='M24 44 L 56 44 L 53 92 L 27 92 Z' fill='%23a8742f'/%3E%3C/svg%3E">
+<!-- ============ VISTA PREVIA DE OTRO DIA (solo en el PC) ============
+     Para ver la pagina como se vera un dia cualquiera, abrela desde el PC
+     agregando ?fecha=AAAA-MM-DD al final de la direccion, por ejemplo:
+       index.html?fecha=2026-11-14
+       index.html?fecha=2026-11-13&hora=23:59   (para ver el cambio de dia)
+     En la pagina publicada (almendrito.github.io) esto no hace nada, asi
+     que nadie puede adelantarse a la sorpresa con este truco. -->
+<script>
+/**
+ * Si la pagina se abre desde el PC con ?fecha=AAAA-MM-DD en la direccion,
+ * hace que todo el script crea que hoy es ese dia. El reloj sigue
+ * avanzando normalmente a partir de la hora simulada.
+ *
+ * Solo actua si la pagina se abrio con doble clic (file:) o desde un
+ * servidor local (localhost o 127.0.0.1). Si la fecha viene mal escrita,
+ * avisa en la consola y la pagina usa la fecha real.
+ */
+function activarFechaSimulada() {
+  // Paso 1: solo en el PC, nunca en la pagina publicada
+  const esArchivoLocal = location.protocol === "file:";
+  const esServidorLocal = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+  if (!esArchivoLocal && !esServidorLocal) {
+    return;
+  }
+
+  // Paso 2: leer ?fecha= (obligatoria) y ?hora= (opcional) de la direccion
+  const parametros = new URLSearchParams(location.search);
+  const textoFecha = parametros.get("fecha");
+  if (!textoFecha) {
+    return;
+  }
+  const partesFecha = textoFecha.split("-");
+  const ahoraReal = new Date();
+  // Sin ?hora= se usa la hora real, asi solo cambia el dia
+  let hora = ahoraReal.getHours();
+  let minuto = ahoraReal.getMinutes();
+  const textoHora = parametros.get("hora");
+  if (textoHora) {
+    const partesHora = textoHora.split(":");
+    hora = Number(partesHora[0]);
+    minuto = 0;
+    if (partesHora.length > 1) {
+      minuto = Number(partesHora[1]);
+    }
+  }
+  const fechaSimulada = new Date(
+    Number(partesFecha[0]), Number(partesFecha[1]) - 1, Number(partesFecha[2]),
+    hora, minuto, ahoraReal.getSeconds()
+  );
+  if (isNaN(fechaSimulada.getTime())) {
+    console.warn("Vista previa: la fecha '" + textoFecha + "' no se entiende. Escribela como ?fecha=2026-11-14.");
+    return;
+  }
+
+  // Paso 3: cuanto hay que adelantar (o atrasar) el reloj, en milisegundos
+  const desfaseMs = fechaSimulada.getTime() - ahoraReal.getTime();
+
+  // Paso 4: reemplazar el reloj del navegador por uno desplazado.
+  // NOTA (herramienta avanzada): "class ... extends Date" crea una version
+  // propia de Date que hereda todo lo de la original y solo cambia dos
+  // cosas: "new Date()" sin datos y "Date.now()" devuelven la hora
+  // simulada. "...valores" significa "todos los datos que lleguen, sean
+  // cuantos sean", y hace falta porque Date se puede crear con 0 a 7
+  // datos. No habia otra forma: el resto del script usa new Date() en
+  // muchos lugares y asi no hay que tocar ninguno.
+  const DateReal = Date;
+  class DateSimulada extends DateReal {
+    constructor(...valores) {
+      if (valores.length === 0) {
+        super(DateReal.now() + desfaseMs);
+      } else {
+        super(...valores);
+      }
+    }
+    static now() {
+      return DateReal.now() + desfaseMs;
+    }
+  }
+  window.Date = DateSimulada;
+
+  // Paso 5: una etiqueta visible para no olvidar que es una simulacion
+  document.addEventListener("DOMContentLoaded", function () {
+    const etiqueta = document.createElement("div");
+    etiqueta.textContent = "VISTA PREVIA · " + textoFecha;
+    etiqueta.style.cssText = "position:fixed;top:8px;left:8px;z-index:50;" +
+      "padding:4px 10px;border-radius:999px;background:#e2697a;color:#0b0f1a;" +
+      "font:700 11px/1.4 monospace;letter-spacing:0.12em;pointer-events:none;";
+    document.body.appendChild(etiqueta);
+  });
+}
+activarFechaSimulada();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -490,6 +588,69 @@
     display: block;
   }
 
+  /* Boton para escuchar la cancion de un hito. Las barritas son las
+     mismas del boton de musica y se mueven mientras suena. */
+  .hito-cancion {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    width: fit-content;
+    max-width: 100%;
+    margin-top: 0.9rem;
+    padding: 0.55rem 1.05rem 0.55rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--borde);
+    background: var(--espacio-2);
+    color: var(--texto);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.74rem;
+    letter-spacing: 0.06em;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .hito-cancion:hover { border-color: rgba(77, 216, 255, 0.5); }
+  .hito.walle .hito-cancion:hover { border-color: rgba(217, 142, 50, 0.5); }
+
+  .hito-cancion .barras {
+    flex-shrink: 0;
+    transform: scale(0.75);
+  }
+
+  .hito.walle .hito-cancion .barras span { background: var(--ambar); }
+
+  .hito-cancion-estado {
+    color: var(--texto-suave);
+    letter-spacing: 0.2em;
+    flex-shrink: 0;
+  }
+
+  /* El nombre de la cancion se corta con "..." si no cabe en el celular */
+  .hito-cancion-nombre {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .hito-cancion.sonando {
+    border-color: rgba(77, 216, 255, 0.6);
+    box-shadow: 0 0 16px rgba(77, 216, 255, 0.25);
+  }
+
+  .hito.walle .hito-cancion.sonando {
+    border-color: rgba(217, 142, 50, 0.6);
+    box-shadow: 0 0 16px rgba(217, 142, 50, 0.25);
+  }
+
+  .hito-cancion.sonando .barras span {
+    animation: ecualizador 0.9s ease-in-out infinite;
+  }
+
+  .hito-cancion.sonando .barras span:nth-child(2) { animation-delay: 0.15s; }
+  .hito-cancion.sonando .barras span:nth-child(3) { animation-delay: 0.3s; }
+  .hito-cancion.sonando .barras span:nth-child(4) { animation-delay: 0.45s; }
+
   /* ---------- Visor de fotos (pantalla completa) ---------- */
   .visor {
     position: fixed;
@@ -894,18 +1055,80 @@
   .aparece.visible { opacity: 1; transform: translateY(0); }
 
   /* ---------- Chispas al tocar un robot ---------- */
+  /* z-index 30: por encima de la pantalla de entrada (20), para que las
+     chispas del boton "Si" se vean antes de que la pantalla se desvanezca */
   .chispa {
     position: fixed;
     width: 6px; height: 6px;
     border-radius: 50%;
     pointer-events: none;
-    z-index: 10;
+    z-index: 30;
     animation: estallar 0.9s ease-out forwards;
   }
 
   @keyframes estallar {
     0%   { transform: translate(0, 0) scale(1); opacity: 1; }
     100% { transform: translate(var(--dx), var(--dy)) scale(0.3); opacity: 0; }
+  }
+
+  /* ---------- Explosion del gran dia ----------
+     Solo el dia del aniversario (FECHA_EVENTO): al abrir la pagina y al
+     apretar "Si". Se arma con tres piezas: un destello que ilumina toda
+     la pantalla, un anillo que se expande (onda de choque) y muchas
+     chispas grandes. */
+  .destello {
+    position: fixed;
+    inset: 0;
+    z-index: 29;
+    pointer-events: none;
+    /* --x y --y: el punto de la explosion, los pone el script */
+    background: radial-gradient(circle at var(--x, 50%) var(--y, 50%),
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(77, 216, 255, 0.55) 16%,
+      rgba(217, 142, 50, 0.22) 36%,
+      transparent 62%);
+    animation: destellar 1.1s ease-out forwards;
+  }
+
+  @keyframes destellar {
+    0%   { opacity: 0; }
+    12%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  .onda-choque {
+    position: fixed;
+    z-index: 29;
+    pointer-events: none;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    border: 3px solid var(--cian);
+    box-shadow: 0 0 26px rgba(77, 216, 255, 0.6), inset 0 0 20px rgba(77, 216, 255, 0.35);
+    /* centrado en el punto de la explosion mientras crece */
+    transform: translate(-50%, -50%);
+    animation: expandirOnda 1.4s cubic-bezier(0.15, 0.6, 0.3, 1) forwards;
+  }
+
+  .onda-choque.ambar {
+    border-color: var(--ambar);
+    box-shadow: 0 0 26px rgba(217, 142, 50, 0.6), inset 0 0 20px rgba(217, 142, 50, 0.35);
+  }
+
+  @keyframes expandirOnda {
+    0%   { width: 0; height: 0; opacity: 1; }
+    100% { width: var(--tamanio-final, 150vmax); height: var(--tamanio-final, 150vmax); opacity: 0; }
+  }
+
+  /* Mientras explota, el contenido de la pantalla de entrada espera
+     escondido y despues aparece con un leve zoom */
+  .intro > :not(.intro-cielo) {
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+
+  .intro.en-espera > :not(.intro-cielo) {
+    opacity: 0;
+    transform: scale(0.9);
   }
 
   /* ---------- Boton de musica ---------- */
@@ -1640,6 +1863,12 @@ const FECHA_EVENTO = new Date(2026, 11 - 1, 14);
 //   titulo una frase corta
 //   texto  una o dos frases (puede ir vacio: "")
 //   foto   ruta de una foto (puede ir vacia: ""); al tocarla se abre en grande
+// Y, si quieres, una cancion (estos tres se pueden omitir):
+//   cancion        ruta del mp3, por ejemplo "musica/hitos/2025-11-14.mp3"
+//   nombreCancion  lo que dice el boton, por ejemplo "La vie en rose · Édith Piaf"
+//   desde          segundo en que empieza a sonar (para partir en el coro)
+// Fotos de los hitos: carpeta fotos/hitos/. Canciones: carpeta musica/hitos/.
+// Si un archivo no existe, su foto o su boton simplemente no aparece.
 // Un hito con fecha futura queda escondido hasta ese dia.
 // TEXTOS DE EJEMPLO: los que dicen [Ejemplo] tienen fecha inventada;
 // cambialos por los de verdad.
@@ -1649,6 +1878,9 @@ const HITOS = [
     titulo: "[Ejemplo] Primera salida",
     texto: "[Ejemplo] Cambia la fecha y cuenta adónde fueron.",
     foto: "fotos/2.jpeg",
+    cancion: "musica/cancion.mp3",
+    nombreCancion: "[Ejemplo] La vie en rose",
+    desde: 0,
   },
   {
     fecha: "2025-11-14",
@@ -1679,6 +1911,10 @@ const HITOS = [
 // Pregunta de entrada del gran dia. Los otros dias se pregunta por
 // el dia de la semana ("¿Quieres pasar este martes conmigo?").
 const PREGUNTA_GRAN_DIA = "¿Quieres empezar nuestro segundo año conmigo?";
+
+// Texto de la consolita verde de la entrada ese mismo dia, despues de la
+// explosion (los otros dias dice "> esperando respuesta").
+const CONSOLA_GRAN_DIA = "> evento detectado: una vuelta completa al sol";
 
 // Mensajes por dia (formato "AAAA-MM-DD"). Los dias que no esten
 // en la lista usan el mensaje generico de mas abajo.
@@ -2122,6 +2358,138 @@ for (let i = 0; i < FOTOS.length; i++) {
   grillaGaleria.appendChild(crearTarjetaFoto(FOTOS[i], i));
 }
 
+// ----- Canciones de la linea de tiempo -----
+
+// Un solo reproductor para todas las canciones de los hitos: al tocar
+// otra, la anterior se corta, asi nunca suenan dos a la vez.
+const reproductorHitos = new Audio();
+reproductorHitos.volume = VOLUMEN;
+
+// Boton del hito que esta sonando ahora; null si no suena ninguno
+let botonCancionActiva = null;
+
+/**
+ * Cambia como se ve el boton de una cancion: con las barritas moviendose
+ * y "PAUSAR" mientras suena, o quieto y "ESCUCHAR" cuando no.
+ *
+ * Parametros:
+ *   boton        el boton .hito-cancion
+ *   estaSonando  true si la cancion de ese boton esta sonando
+ */
+function marcarBotonCancion(boton, estaSonando) {
+  const estado = boton.querySelector(".hito-cancion-estado");
+  if (estaSonando) {
+    boton.classList.add("sonando");
+    estado.textContent = "PAUSAR";
+  } else {
+    boton.classList.remove("sonando");
+    estado.textContent = "ESCUCHAR";
+  }
+  boton.setAttribute("aria-pressed", String(estaSonando));
+}
+
+/**
+ * Detiene la cancion de hito que este sonando (si hay una) y deja su
+ * boton en reposo. Tambien la llama el boton de musica de fondo.
+ */
+function detenerCancionDeHito() {
+  reproductorHitos.pause();
+  if (botonCancionActiva !== null) {
+    marcarBotonCancion(botonCancionActiva, false);
+    botonCancionActiva = null;
+  }
+}
+
+/**
+ * Pone o pausa la cancion de un hito. Si estaba sonando otra cosa (otra
+ * cancion de hito o la musica de fondo), la corta primero.
+ *
+ * Parametros:
+ *   boton  el boton .hito-cancion que se toco
+ *   hito   objeto de HITOS con cancion y, opcional, desde (en segundos)
+ */
+function alternarCancionDeHito(boton, hito) {
+  // Paso 1: si se toco la que ya suena, solo se pausa
+  if (botonCancionActiva === boton) {
+    detenerCancionDeHito();
+    return;
+  }
+
+  // Paso 2: apagar lo que este sonando
+  detenerCancionDeHito();
+  pausarMusicaDeFondo();
+
+  // Paso 3: cargar la cancion. "#t=45" al final de la ruta le dice al
+  // navegador que parta en el segundo 45 (asi se puede empezar en el coro)
+  let ruta = hito.cancion;
+  if (hito.desde) {
+    ruta = ruta + "#t=" + hito.desde;
+  }
+  reproductorHitos.src = ruta;
+
+  // Paso 4: reproducir; si el navegador no deja, el boton vuelve a reposo
+  botonCancionActiva = boton;
+  marcarBotonCancion(boton, true);
+  reproductorHitos.play().catch(function () {
+    detenerCancionDeHito();
+  });
+}
+
+// Al terminar la cancion, el boton vuelve a reposo
+reproductorHitos.addEventListener("ended", detenerCancionDeHito);
+
+/**
+ * Arma el boton de la cancion de un hito: barritas, "ESCUCHAR" y el
+ * nombre de la cancion. Si el archivo no existe, el boton se quita solo.
+ *
+ * Parametros:
+ *   hito  objeto de HITOS con cancion y nombreCancion
+ *
+ * Retorna:
+ *   el elemento <button> listo para agregar a la tarjeta del hito
+ */
+function crearBotonCancion(hito) {
+  // Paso 1: el boton con sus tres partes
+  const boton = document.createElement("button");
+  boton.type = "button";
+  boton.className = "hito-cancion";
+  const barras = document.createElement("span");
+  barras.className = "barras";
+  for (let i = 0; i < 4; i++) {
+    barras.appendChild(document.createElement("span"));
+  }
+  const estado = document.createElement("span");
+  estado.className = "hito-cancion-estado";
+  const nombre = document.createElement("span");
+  nombre.className = "hito-cancion-nombre";
+  let textoNombre = hito.nombreCancion;
+  if (!textoNombre) {
+    textoNombre = "nuestra canción de ese día";
+  }
+  nombre.textContent = textoNombre;
+  boton.appendChild(barras);
+  boton.appendChild(estado);
+  boton.appendChild(nombre);
+  boton.setAttribute("aria-label", "Escuchar " + textoNombre);
+  marcarBotonCancion(boton, false);
+
+  // Paso 2: revisar que el archivo exista. "metadata" baja solo el
+  // encabezado del mp3, no la cancion entera.
+  const prueba = new Audio();
+  prueba.preload = "metadata";
+  prueba.addEventListener("error", function () {
+    boton.remove();
+  });
+  prueba.src = hito.cancion;
+
+  // Paso 3: al tocarlo, suena o se pausa
+  boton.addEventListener("click", function () {
+    alternarCancionDeHito(boton, hito);
+  });
+
+  return boton;
+}
+
 // ----- Linea de tiempo -----
 
 // Abreviaturas de los meses para las fechas de los hitos ("14 NOV 2025")
@@ -2163,10 +2531,10 @@ function compararHitosPorFecha(hitoA, hitoB) {
 
 /**
  * Arma la tarjeta de un hito: punto sobre la linea, fecha, titulo,
- * texto y foto (estos dos ultimos solo si tiene).
+ * texto, foto y cancion (estos tres ultimos solo si tiene).
  *
  * Parametros:
- *   hito    objeto de HITOS (fecha, titulo, texto, foto)
+ *   hito    objeto de HITOS (fecha, titulo, texto, foto, cancion)
  *   indice  posicion del hito en la linea, desde 0; los pares van en
  *           cian (EVA) y los impares en ambar (WALL-E)
  *
@@ -2224,6 +2592,11 @@ function crearHito(hito, indice) {
     });
     botonFoto.appendChild(imagen);
     tarjeta.appendChild(botonFoto);
+  }
+
+  // Paso 5: la cancion, si tiene
+  if (hito.cancion) {
+    tarjeta.appendChild(crearBotonCancion(hito));
   }
 
   return tarjeta;
@@ -2399,6 +2772,162 @@ document.querySelectorAll(".robot-click").forEach((robot) => {
   robot.addEventListener("click", (ev) => estallido(ev.clientX, ev.clientY, 14));
 });
 
+// ----- Explosion del gran dia -----
+
+// Colores de las chispas grandes: los de siempre mas amarillo y lila
+const COLORES_EXPLOSION = ["#4dd8ff", "#d98e32", "#58c472", "#ffffff", "#ffd166", "#b58cff"];
+
+// Cuanto dura toda la explosion de entrada, en milisegundos; recien
+// despues aparece la pregunta
+const DURACION_EXPLOSION_MS = 2100;
+
+// Pausa antes de que empiece la explosion de entrada, en milisegundos,
+// para que la pagina alcance a cargar y se vea fluida
+const RETRASO_EXPLOSION_MS = 450;
+
+/**
+ * Lanza chispas grandes y brillantes desde un punto, en todas
+ * direcciones. Es la version potente de estallido().
+ *
+ * Parametros:
+ *   x, y          punto de origen, en pixeles desde la esquina superior
+ *                 izquierda de la pantalla
+ *   cantidad      cuantas chispas
+ *   distanciaPx   distancia maxima que recorren, en pixeles (la minima
+ *                 es un cuarto de esa)
+ */
+function lanzarChispasGrandes(x, y, cantidad, distanciaPx) {
+  for (let i = 0; i < cantidad; i++) {
+    // Paso 1: la chispa, con tamanio y color al azar
+    const chispa = document.createElement("span");
+    chispa.className = "chispa";
+    const tamanioPx = 4 + Math.random() * 6;
+    const color = COLORES_EXPLOSION[Math.floor(Math.random() * COLORES_EXPLOSION.length)];
+    chispa.style.width = tamanioPx + "px";
+    chispa.style.height = tamanioPx + "px";
+    chispa.style.left = x + "px";
+    chispa.style.top = y + "px";
+    chispa.style.background = color;
+    chispa.style.boxShadow = "0 0 10px " + color;
+
+    // Paso 2: direccion y distancia al azar; las que van mas lejos duran
+    // un poco mas, para que parezca que frenan en el aire
+    const anguloRad = Math.random() * 2 * Math.PI;
+    const distanciaFinalPx = distanciaPx * (0.25 + Math.random() * 0.75);
+    const duracionS = 1.1 + Math.random() * 0.9;
+    chispa.style.setProperty("--dx", Math.cos(anguloRad) * distanciaFinalPx + "px");
+    chispa.style.setProperty("--dy", Math.sin(anguloRad) * distanciaFinalPx + "px");
+    chispa.style.animationDuration = duracionS + "s";
+
+    // Paso 3: agregarla y borrarla cuando termina su animacion
+    document.body.appendChild(chispa);
+    setTimeout(function () { chispa.remove(); }, duracionS * 1000 + 100);
+  }
+}
+
+/**
+ * Una explosion completa en un punto: destello, onda de choque y chispas.
+ *
+ * Parametros:
+ *   x, y      punto de la explosion, en pixeles
+ *   potencia  1 para la explosion principal; menos (0.4, 0.6) para las
+ *             secundarias, que son mas chicas
+ *   esAmbar   true para que la onda sea ambar (WALL-E) en vez de cian (EVA)
+ */
+function explotarEn(x, y, potencia, esAmbar) {
+  // Paso 1: el destello, centrado en el punto
+  const destello = document.createElement("div");
+  destello.className = "destello";
+  destello.style.setProperty("--x", x + "px");
+  destello.style.setProperty("--y", y + "px");
+  destello.style.opacity = "0";
+  if (potencia < 1) {
+    // las secundarias iluminan menos
+    destello.style.filter = "opacity(" + potencia + ")";
+  }
+  document.body.appendChild(destello);
+  setTimeout(function () { destello.remove(); }, 1200);
+
+  // Paso 2: la onda de choque
+  const onda = document.createElement("div");
+  onda.className = "onda-choque";
+  if (esAmbar) {
+    onda.classList.add("ambar");
+  }
+  onda.style.left = x + "px";
+  onda.style.top = y + "px";
+  onda.style.setProperty("--tamanio-final", (150 * potencia) + "vmax");
+  document.body.appendChild(onda);
+  setTimeout(function () { onda.remove(); }, 1500);
+
+  // Paso 3: las chispas; la distancia depende del tamanio de la pantalla
+  const ladoMenorPx = Math.min(window.innerWidth, window.innerHeight);
+  lanzarChispasGrandes(x, y, Math.round(90 * potencia), ladoMenorPx * 0.6 * potencia);
+}
+
+/**
+ * Deja programada una explosion para dentro de un rato.
+ *
+ * Parametros:
+ *   retrasoMs  cuantos milisegundos esperar
+ *   x, y, potencia, esAmbar  igual que en explotarEn()
+ */
+function programarExplosion(retrasoMs, x, y, potencia, esAmbar) {
+  setTimeout(function () {
+    explotarEn(x, y, potencia, esAmbar);
+  }, retrasoMs);
+}
+
+/**
+ * La secuencia completa del gran dia: una explosion grande en un punto y
+ * despues cinco mas chicas alrededor, como fuegos artificiales.
+ *
+ * Parametros:
+ *   x, y  punto de la explosion principal, en pixeles
+ */
+function explosionDelGranDia(x, y) {
+  // Paso 1: la explosion principal
+  explotarEn(x, y, 1, false);
+
+  // Paso 2: las secundarias, en lugares al azar de la pantalla y
+  // alternando cian y ambar
+  const ancho = window.innerWidth;
+  const alto = window.innerHeight;
+  for (let i = 0; i < 5; i++) {
+    const retrasoMs = 350 + i * 300;
+    const xSecundaria = ancho * (0.15 + Math.random() * 0.7);
+    const ySecundaria = alto * (0.12 + Math.random() * 0.6);
+    const esAmbar = i % 2 === 0;
+    programarExplosion(retrasoMs, xSecundaria, ySecundaria, 0.45, esAmbar);
+  }
+}
+
+/**
+ * Prepara la pantalla de entrada del gran dia: cambia el texto de la
+ * consolita y, si el sistema no pide menos movimiento, esconde la
+ * pregunta, hace la explosion y despues la muestra.
+ */
+function prepararEntradaDelGranDia() {
+  // Paso 1: el texto especial de la consolita
+  introConsola.textContent = CONSOLA_GRAN_DIA;
+
+  // Paso 2: con "reducir movimiento" activado no hay explosion
+  if (prefiereMenosMovimiento) {
+    return;
+  }
+
+  // Paso 3: la pregunta espera escondida mientras explota todo
+  intro.classList.add("en-espera");
+  setTimeout(function () {
+    explosionDelGranDia(window.innerWidth / 2, window.innerHeight / 2);
+  }, RETRASO_EXPLOSION_MS);
+
+  // Paso 4: al terminar, aparece la pregunta
+  setTimeout(function () {
+    intro.classList.remove("en-espera");
+  }, RETRASO_EXPLOSION_MS + DURACION_EXPLOSION_MS);
+}
+
 // ----- Musica de fondo -----
 const btnMusica = document.getElementById("btnMusica");
 const audio = new Audio(MUSICA);
@@ -2413,8 +2942,22 @@ audio.addEventListener("error", () => {
   btnMusica.style.display = "none";
 });
 
+/**
+ * Pausa la musica de fondo si esta sonando y deja su boton en reposo.
+ * La usan las canciones de los hitos para no sonar encima.
+ */
+function pausarMusicaDeFondo() {
+  if (!audio.paused) {
+    audio.pause();
+    btnMusica.classList.remove("sonando");
+    btnMusica.title = "Reproducir nuestra cancion";
+  }
+}
+
 btnMusica.addEventListener("click", () => {
   if (audio.paused) {
+    // si estaba sonando la cancion de un hito, se corta primero
+    detenerCancionDeHito();
     audio.play().then(() => {
       btnMusica.classList.add("sonando");
       btnMusica.title = "Pausar la musica";
@@ -2479,16 +3022,47 @@ btnNo.addEventListener("pointerenter", escapar);
 btnNo.addEventListener("pointerdown", escapar);
 btnNo.addEventListener("click", escapar);
 
-btnSi.addEventListener("click", (ev) => {
+// Cuanto esperar entre apretar "Si" y que se desvanezca la entrada, en
+// milisegundos. El gran dia se espera mas, para que se vea la explosion.
+const ESPERA_ANTES_DE_ABRIR_MS = 700;
+const ESPERA_ANTES_DE_ABRIR_GRAN_DIA_MS = 1500;
+
+/**
+ * Lo que pasa al apretar "Si": chispas (o la explosion completa el gran
+ * dia), y despues la pantalla de entrada se desvanece y se puede bajar.
+ *
+ * Parametros:
+ *   evento  el clic; trae el punto donde se toco (con teclado viene en
+ *           0, y entonces se usa el centro de la pantalla)
+ */
+function aceptarDirectiva(evento) {
+  // Paso 1: el punto donde se toco
+  let x = evento.clientX;
+  let y = evento.clientY;
+  if (!x && !y) {
+    x = window.innerWidth / 2;
+    y = window.innerHeight / 2;
+  }
+
+  // Paso 2: la celebracion; el dia del aniversario es la explosion completa
   introConsola.textContent = "> directiva aceptada";
-  estallido(ev.clientX || window.innerWidth / 2, ev.clientY || window.innerHeight / 2, 26);
-  setTimeout(() => {
+  let esperaMs = ESPERA_ANTES_DE_ABRIR_MS;
+  if (esElDiaExacto && !prefiereMenosMovimiento) {
+    explosionDelGranDia(x, y);
+    esperaMs = ESPERA_ANTES_DE_ABRIR_GRAN_DIA_MS;
+  } else {
+    estallido(x, y, 26);
+  }
+
+  // Paso 3: desvanecer la entrada y soltar el scroll
+  setTimeout(function () {
     intro.style.opacity = "0";
     intro.style.pointerEvents = "none";
     document.body.style.overflow = "";
-    setTimeout(() => intro.remove(), 1000);
-  }, 700);
-});
+    setTimeout(function () { intro.remove(); }, 1000);
+  }, esperaMs);
+}
+btnSi.addEventListener("click", aceptarDirectiva);
 
 // ----- Carta clasificada -----
 const sobre = document.getElementById("sobre");
@@ -2896,6 +3470,11 @@ const esElDiaExacto = claveFecha(ahoraCarga) === claveFecha(FECHA_EVENTO);
 document.querySelector(".intro-pregunta").textContent =
   esElDiaExacto && PREGUNTA_GRAN_DIA ? PREGUNTA_GRAN_DIA :
   "¿Quieres pasar este " + nombreDia + " conmigo?";
+
+// El dia exacto del aniversario la entrada parte con una explosion
+if (esElDiaExacto) {
+  prepararEntradaDelGranDia();
+}
 
 if (esGranDia) {
   // El gran dia: se muestra todo y la seccion de dias previos desaparece
