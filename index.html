@@ -568,11 +568,13 @@ activarFechaSimulada();
     color: var(--texto-suave);
   }
 
+  /* La miniatura respeta la forma de cada foto (vertical u horizontal);
+     solo las muy altas se recortan, dejando a la vista la parte de
+     arriba, que es donde suelen estar las caras */
   .hito-foto {
     display: block;
     margin-top: 0.9rem;
     width: min(240px, 100%);
-    aspect-ratio: 4 / 3;
     border: 1px solid var(--borde);
     border-radius: 10px;
     overflow: hidden;
@@ -583,9 +585,31 @@ activarFechaSimulada();
 
   .hito-foto img {
     width: 100%;
-    height: 100%;
+    height: auto;
+    max-height: 340px;
     object-fit: cover;
+    object-position: center 30%;
     display: block;
+  }
+
+  /* En pantallas anchas la foto va a la derecha del texto, para que la
+     linea de tiempo no quede tan larga; en el celular sigue debajo */
+  @media (min-width: 640px) {
+    .hito.con-foto {
+      display: grid;
+      grid-template-columns: 1fr min(240px, 42%);
+      column-gap: 1.6rem;
+      align-items: start;
+    }
+
+    .hito.con-foto > :not(.hito-foto) { grid-column: 1; }
+
+    .hito.con-foto .hito-foto {
+      grid-column: 2;
+      grid-row: 1 / span 4;
+      width: 100%;
+      margin-top: 0;
+    }
   }
 
   /* Boton para escuchar la cancion de un hito. Las barritas son las
@@ -1874,31 +1898,106 @@ const FECHA_EVENTO = new Date(2026, 11 - 1, 14);
 // cambialos por los de verdad.
 const HITOS = [
   {
-    fecha: "2025-09-01",
-    titulo: "[Ejemplo] Primera salida",
-    texto: "[Ejemplo] Cambia la fecha y cuenta adónde fueron.",
-    foto: "fotos/2.jpeg",
-    cancion: "musica/cancion.mp3",
-    nombreCancion: "[Ejemplo] La vie en rose",
-    desde: 0,
-  },
-  {
     fecha: "2025-11-14",
     titulo: "Directiva aceptada",
-    texto: "Empezamos a pololear.",
-    foto: "fotos/1.jpeg",
+    texto: "Nuestro primer día siendo pololos.",
+    foto: "fotos/hitos/2025-11-14.jpg",
   },
   {
-    fecha: "2026-02-01",
-    titulo: "[Ejemplo] Primer viaje juntos",
-    texto: "[Ejemplo] Adónde fueron y qué es lo que más recuerdas.",
-    foto: "fotos/3.jpeg",
+    fecha: "2025-12-14",
+    titulo: "Primer cumplemes",
+    texto: "",
+    foto: "fotos/hitos/2025-12-14.jpg",
+  },
+  {
+    fecha: "2025-12-28",
+    titulo: "Una foto que me gusta mucho",
+    texto: "",
+    foto: "fotos/hitos/2025-12-28.jpg",
+  },
+  {
+    fecha: "2026-01-14",
+    titulo: "Triple Corona",
+    texto: "Así celebramos el segundo cumplemes.",
+    foto: "fotos/hitos/2026-01-14.jpg",
+  },
+  {
+    fecha: "2026-01-24",
+    titulo: "Tocó separarnos un tiempo",
+    texto: "",
+    foto: "fotos/hitos/2026-01-24.jpg",
+  },
+  {
+    fecha: "2026-03-28",
+    titulo: "Salida a pololear",
+    texto: "",
+    foto: "fotos/hitos/2026-03-28.jpg",
+  },
+  {
+    fecha: "2026-04-05",
+    titulo: "Primera Pascua",
+    texto: "",
+    foto: "fotos/hitos/2026-04-05.jpg",
+  },
+  {
+    fecha: "2026-04-26",
+    titulo: "Nuestra primera media maratón",
+    texto: "",
+    foto: "fotos/hitos/2026-04-26.jpg",
+  },
+  {
+    fecha: "2026-05-03",
+    titulo: "Primer viaje juntos",
+    texto: "",
+    foto: "fotos/hitos/2026-05-03.jpg",
   },
   {
     fecha: "2026-06-14",
     titulo: "Siete meses",
     texto: "Nació esta página.",
     foto: "",
+  },
+  {
+    fecha: "2026-07-15",
+    titulo: "Mi licenciatura",
+    texto: "",
+    foto: "fotos/hitos/2026-07-15.jpg",
+  },
+  {
+    fecha: "2026-09-12",
+    titulo: "Recreando nuestra primera cita",
+    texto: "",
+    foto: "fotos/hitos/2026-09-12.jpg",
+  },
+  {
+    fecha: "2026-09-19",
+    titulo: "Primeras Fiestas Patrias",
+    texto: "",
+    foto: "fotos/hitos/2026-09-19.jpg",
+  },
+  {
+    fecha: "2026-10-04",
+    titulo: "Segunda sesión de fotos",
+    texto: "",
+    foto: "fotos/hitos/2026-10-04.jpg",
+  },
+  {
+    fecha: "2026-10-31",
+    titulo: "Segundo Halloween",
+    texto: "",
+    foto: "fotos/hitos/2026-10-31.jpg",
+  },
+  {
+    fecha: "2026-11-03",
+    titulo: "Junta con tus amigos",
+    texto: "",
+    foto: "fotos/hitos/2026-11-03.jpg",
+  },
+  {
+    fecha: "2026-11-06",
+    titulo: "Primera ida a la disco",
+    texto: "",
+    foto: "fotos/hitos/2026-11-06.jpg",
   },
   {
     fecha: "2026-11-14",
@@ -2571,6 +2670,8 @@ function crearHito(hito, indice) {
   // Paso 4: la foto, si tiene. Es un boton que la abre en el visor;
   // si el archivo no existe, el boton desaparece sin dejar hueco.
   if (hito.foto) {
+    // con-foto activa el diseño de foto al lado del texto en el PC
+    tarjeta.classList.add("con-foto");
     const botonFoto = document.createElement("button");
     botonFoto.className = "hito-foto";
     botonFoto.type = "button";
@@ -2581,6 +2682,7 @@ function crearHito(hito, indice) {
     imagen.loading = "lazy";
     imagen.addEventListener("error", function () {
       botonFoto.remove();
+      tarjeta.classList.remove("con-foto");
     });
     botonFoto.addEventListener("click", function () {
       abrirVisor([{
