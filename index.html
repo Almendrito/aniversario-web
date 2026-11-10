@@ -4,8 +4,8 @@
 
   Que hace:
     Pregunta de entrada, contador del tiempo juntos, cuenta regresiva al
-    proximo aniversario, linea de tiempo con fotos y canciones, galeria
-    con visor de fotos, playlist, bitacora, mensajes privados, carta con
+    proximo aniversario, linea de tiempo con fotos y canciones (con
+    visor de fotos), playlist, bitacora, mensajes privados, carta con
     clave y cierre. El dia del aniversario la entrada parte con una
     explosion.
 
@@ -18,7 +18,7 @@
     en el PC con ?fecha=AAAA-MM-DD al final (ver "VISTA PREVIA" abajo).
 
   Que necesita:
-    - fotos/ con las fotos de la galeria; fotos/hitos/ las de la linea de tiempo
+    - fotos/hitos/ con las fotos de la linea de tiempo
     - musica/cancion.mp3 para el boton de musica; musica/hitos/ las
       canciones de la linea de tiempo (opcionales)
     - img/vista-previa.png, la imagen que aparece al mandar el link
@@ -441,78 +441,6 @@ activarFechaSimulada();
 
   @keyframes cursor { 50% { opacity: 0; } }
 
-  /* ---------- Galeria ---------- */
-  .galeria {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1.4rem;
-    max-width: 1020px;
-    margin: 0 auto;
-  }
-
-  .archivo {
-    background: var(--espacio-2);
-    border: 1px solid var(--borde);
-    border-radius: 14px;
-    overflow: hidden;
-    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
-  }
-
-  .archivo:hover {
-    transform: translateY(-6px);
-    border-color: rgba(217, 142, 50, 0.5);
-    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
-  }
-
-  .archivo .marco {
-    aspect-ratio: 1 / 1;
-    background: linear-gradient(135deg, #161d2e, #0e1320);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-  }
-
-  .archivo img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  .sin-foto {
-    text-align: center;
-    color: var(--texto-suave);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
-    line-height: 1.8;
-    padding: 1rem;
-  }
-
-  .sin-foto .brote { font-size: 1.8rem; display: block; margin-bottom: 0.4rem; }
-
-  .archivo .info {
-    padding: 0.9rem 1.1rem 1.1rem;
-    border-top: 1px solid var(--borde);
-  }
-
-  .archivo .codigo {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.25em;
-    color: var(--ambar);
-    display: block;
-    margin-bottom: 0.3rem;
-  }
-
-  .archivo .pie {
-    font-size: 0.95rem;
-    font-weight: 500;
-  }
-
-  /* Las fotos que si cargaron se pueden abrir en grande */
-  .archivo.con-foto { cursor: zoom-in; }
-
   /* ---------- Linea de tiempo ---------- */
   .trayectoria {
     position: relative;
@@ -545,8 +473,8 @@ activarFechaSimulada();
 
   .hito:last-child { margin-bottom: 0; }
 
-  /* Punto sobre la linea; cian para los hitos pares (EVA) y ambar para
-     los impares (WALL-E) */
+  /* Punto sobre la linea; ambar (WALL-E) para los hitos del lado
+     izquierdo y cian (EVA) para los del derecho, como en la portada */
   .hito-punto {
     position: absolute;
     left: -2.25rem;
@@ -610,6 +538,46 @@ activarFechaSimulada();
     display: block;
   }
 
+  /* Zigzag en pantallas anchas: la linea va al centro y los hitos se
+     alternan a la izquierda y a la derecha. Cada hito ocupa dos filas
+     de la grilla y el siguiente empieza en la segunda, asi cada uno
+     arranca a la mitad del anterior y la seccion queda en la mitad de
+     alto. --fila la pone el script (1 para el primer hito, 2 para el
+     segundo...). En el celular sigue siendo una sola columna. */
+  @media (min-width: 900px) {
+    .trayectoria {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 4.4rem;
+      row-gap: 1.6rem;
+      max-width: 1040px;
+      padding-left: 0;
+    }
+
+    .trayectoria::before {
+      left: 50%;
+      margin-left: -1px;
+    }
+
+    .trayectoria .hito {
+      margin-bottom: 0;
+      grid-row: var(--fila) / span 2;
+      align-self: start;
+    }
+
+    .trayectoria .hito.lado-izquierdo { grid-column: 1; }
+    .trayectoria .hito.lado-derecho { grid-column: 2; }
+
+    /* El punto queda sobre la linea central: 2,2rem (medio espacio
+       entre columnas) mas la mitad del punto */
+    .hito.lado-izquierdo .hito-punto {
+      left: auto;
+      right: calc(-2.75rem - 1px);
+    }
+
+    .hito.lado-derecho .hito-punto { left: calc(-2.75rem - 1px); }
+  }
+
   /* En pantallas anchas la foto va a la derecha del texto, para que la
      linea de tiempo no quede tan larga; en el celular sigue debajo */
   @media (min-width: 640px) {
@@ -620,7 +588,8 @@ activarFechaSimulada();
       align-items: start;
     }
 
-    .hito.con-foto > :not(.hito-foto) { grid-column: 1; }
+    /* el punto queda fuera: va sobre la linea, no dentro de la grilla */
+    .hito.con-foto > :not(.hito-foto):not(.hito-punto) { grid-column: 1; }
 
     .hito.con-foto .hito-foto {
       grid-column: 2;
@@ -1682,15 +1651,6 @@ activarFechaSimulada();
     <div class="trayectoria" id="trayectoriaLista"></div>
   </section>
 
-  <!-- ============ GALERIA ============ -->
-  <section id="galeria" class="aparece">
-    <div class="encabezado">
-      <span class="etiqueta-seccion">Archivos recuperados</span>
-      <h2 class="titulo-seccion">Nuestros momentos</h2>
-    </div>
-    <div class="galeria" id="galeriaGrid"></div>
-  </section>
-
   <!-- ============ PLAYLIST ============ -->
   <section id="playlist" class="aparece">
     <div class="encabezado">
@@ -1834,7 +1794,7 @@ activarFechaSimulada();
 </main>
 
 <!-- Visor: muestra una foto en grande, sin recortar. Se abre al tocar
-     una foto de la galeria o de la linea de tiempo. -->
+     una foto de la linea de tiempo. -->
 <div class="visor" id="visor" hidden role="dialog" aria-modal="true" aria-label="Foto en grande">
   <button class="visor-btn visor-cerrar" id="visorCerrar" type="button" aria-label="Cerrar">&times;</button>
   <button class="visor-btn visor-anterior" id="visorAnterior" type="button" aria-label="Foto anterior">&#8249;</button>
@@ -1862,21 +1822,6 @@ activarFechaSimulada();
 // 14 de noviembre de 2025 = un año el 14 de noviembre de 2026.
 const FECHA_INICIO = new Date(2025, 11 - 1, 14);
 
-// Fotos de la galeria. Guarda tus fotos en la carpeta "fotos/"
-// con estos nombres (o cambia los nombres aqui) y escribe el
-// pie de foto que quieras para cada una.
-// Opcional: agrega detalle: "..." a una foto para escribir algo mas
-// largo, que aparece solo al abrirla en grande. Ejemplo:
-//   { src: "fotos/1.jpeg", pie: "Donde todo empezo", detalle: "Ese dia..." },
-const FOTOS = [
-  { src: "fotos/1.jpeg", pie: "Donde todo empezo" },
-  { src: "fotos/2.jpeg", pie: "Nuestra primera salida" },
-  { src: "fotos/3.jpeg", pie: "Primer viaje juntos" },
-  { src: "fotos/4.jpeg", pie: "Un dia cualquiera, feliz" },
-  { src: "fotos/5.jpeg", pie: "Mi risa favorita" },
-  { src: "fotos/6.jpeg", pie: "Y los que vienen..." },
-];
-
 // Cancion de fondo. Guarda el archivo mp3 en la carpeta "musica/"
 // con este nombre (o cambia el nombre aqui). Volumen entre 0 y 1.
 const MUSICA = "musica/cancion.mp3";
@@ -1895,8 +1840,8 @@ const PISTA = "Combinación de nuestros números favoritos";
 // EDITA AQUI (6/6): el gran dia y los planes de los dias previos.
 // Antes de esta fecha la pagina muestra el plan del dia y una cuenta
 // regresiva; la linea de tiempo, la carta y el mensaje final quedan
-// bloqueados hasta ese dia (la galeria, la playlist, la bitacora y
-// los mensajes siguen visibles).
+// bloqueados hasta ese dia (la playlist, la bitacora y los mensajes
+// siguen visibles).
 const FECHA_EVENTO = new Date(2026, 11 - 1, 14);
 
 // Linea de tiempo: los momentos importantes, del mas antiguo al mas
@@ -2351,130 +2296,6 @@ visor.caja.addEventListener("touchstart", empezarDeslizamiento, { passive: true 
 visor.caja.addEventListener("touchend", terminarDeslizamiento);
 document.addEventListener("keydown", manejarTeclaDelVisor);
 
-// ----- Galeria -----
-
-// Para cada foto de FOTOS se anota si cargo bien (true) o no (false).
-// El visor solo pasa por las que cargaron.
-const fotoCargo = [];
-
-/**
- * Abre en el visor una foto de la galeria, con todas las demas fotos
- * disponibles para pasar con las flechas.
- *
- * Parametros:
- *   indiceElegido  posicion de la foto tocada dentro de FOTOS (desde 0)
- */
-function abrirGaleriaEnVisor(indiceElegido) {
-  // Una foto que no existe no se puede abrir
-  if (!fotoCargo[indiceElegido]) {
-    return;
-  }
-
-  // Paso 1: armar la lista solo con las fotos que cargaron, recordando
-  // en que lugar de esa lista quedo la que se toco
-  const listaDeFotos = [];
-  let posicionElegida = 0;
-  for (let i = 0; i < FOTOS.length; i++) {
-    if (!fotoCargo[i]) {
-      continue;
-    }
-    if (i === indiceElegido) {
-      posicionElegida = listaDeFotos.length;
-    }
-    let detalle = "";
-    if (FOTOS[i].detalle) {
-      detalle = FOTOS[i].detalle;
-    }
-    listaDeFotos.push({
-      src: FOTOS[i].src,
-      pie: FOTOS[i].pie,
-      detalle: detalle,
-      codigo: "ARCHIVO " + conTresCifras(i + 1) + " / " + conTresCifras(FOTOS.length),
-    });
-  }
-
-  // Paso 2: abrir el visor en esa foto
-  abrirVisor(listaDeFotos, posicionElegida);
-}
-
-/**
- * Arma la tarjeta de una foto de la galeria: la imagen recortada en
- * cuadrado, su codigo ("ARCHIVO 001") y el pie de foto.
- *
- * Parametros:
- *   foto    objeto de FOTOS, con src (ruta), pie (texto) y detalle opcional
- *   indice  posicion de la foto en FOTOS, empezando en 0
- *
- * Retorna:
- *   el elemento <figure> listo para agregar a la galeria. Si la imagen
- *   no existe, la tarjeta muestra un aviso y deja de abrirse.
- */
-function crearTarjetaFoto(foto, indice) {
-  // Paso 1: la tarjeta y el marco cuadrado donde va la imagen
-  const tarjeta = document.createElement("figure");
-  tarjeta.className = "archivo con-foto";
-  const marco = document.createElement("div");
-  marco.className = "marco";
-
-  // Paso 2: la imagen. loading="lazy" hace que el navegador la baje
-  // recien cuando se acerca a la pantalla.
-  const imagen = document.createElement("img");
-  imagen.src = foto.src;
-  imagen.alt = foto.pie;
-  imagen.loading = "lazy";
-  fotoCargo[indice] = true;
-  marco.appendChild(imagen);
-
-  // Paso 3: si la foto no existe, aviso en vez de imagen y la tarjeta
-  // deja de comportarse como boton
-  imagen.addEventListener("error", function () {
-    fotoCargo[indice] = false;
-    tarjeta.classList.remove("con-foto");
-    tarjeta.removeAttribute("role");
-    tarjeta.removeAttribute("tabindex");
-    tarjeta.removeAttribute("aria-label");
-    marco.innerHTML = '<div class="sin-foto"><span class="brote">&#127793;</span>' +
-      "ARCHIVO NO ENCONTRADO<br>agrega <strong>" + foto.src + "</strong></div>";
-  });
-
-  // Paso 4: codigo y pie de foto debajo de la imagen
-  const info = document.createElement("figcaption");
-  info.className = "info";
-  const codigo = document.createElement("span");
-  codigo.className = "codigo";
-  codigo.textContent = "ARCHIVO " + conTresCifras(indice + 1);
-  const pie = document.createElement("div");
-  pie.className = "pie";
-  pie.textContent = foto.pie;
-  info.appendChild(codigo);
-  info.appendChild(pie);
-
-  // Paso 5: tocar la tarjeta, o Enter / espacio con teclado, la abre
-  // en grande. role y tabindex la hacen alcanzable con la tecla Tab.
-  tarjeta.setAttribute("role", "button");
-  tarjeta.tabIndex = 0;
-  tarjeta.setAttribute("aria-label", "Ver en grande: " + foto.pie);
-  tarjeta.addEventListener("click", function () {
-    abrirGaleriaEnVisor(indice);
-  });
-  tarjeta.addEventListener("keydown", function (evento) {
-    if (esTeclaDeActivar(evento)) {
-      evento.preventDefault();
-      abrirGaleriaEnVisor(indice);
-    }
-  });
-
-  tarjeta.appendChild(marco);
-  tarjeta.appendChild(info);
-  return tarjeta;
-}
-
-// Se arma una tarjeta por cada foto de FOTOS
-const grillaGaleria = document.getElementById("galeriaGrid");
-for (let i = 0; i < FOTOS.length; i++) {
-  grillaGaleria.appendChild(crearTarjetaFoto(FOTOS[i], i));
-}
-
 // ----- Canciones de la linea de tiempo -----
 
 // Un solo reproductor para todas las canciones de los hitos: al tocar
@@ -2652,19 +2473,26 @@ function compararHitosPorFecha(hitoA, hitoB) {
  *
  * Parametros:
  *   hito    objeto de HITOS (fecha, titulo, texto, foto, cancion)
- *   indice  posicion del hito en la linea, desde 0; los pares van en
- *           cian (EVA) y los impares en ambar (WALL-E)
+ *   indice  posicion del hito en la linea, desde 0; los pares van a
+ *           la izquierda en ambar (WALL-E) y los impares a la derecha
+ *           en cian (EVA)
  *
  * Retorna:
  *   el elemento <article> listo para agregar a la linea de tiempo
  */
 function crearHito(hito, indice) {
-  // Paso 1: la tarjeta, con el color que le toca
+  // Paso 1: la tarjeta, con su lado y su color. Los pares van a la
+  // izquierda en ambar (WALL-E) y los impares a la derecha en cian
+  // (EVA), como en la portada. --fila ubica el hito en el zigzag.
   const tarjeta = document.createElement("article");
   tarjeta.className = "hito";
-  if (indice % 2 === 1) {
+  if (indice % 2 === 0) {
     tarjeta.classList.add("walle");
+    tarjeta.classList.add("lado-izquierdo");
+  } else {
+    tarjeta.classList.add("lado-derecho");
   }
+  tarjeta.style.setProperty("--fila", String(indice + 1));
 
   // Paso 2: el punto sobre la linea punteada, la fecha y el titulo
   const punto = document.createElement("span");
