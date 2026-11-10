@@ -4,8 +4,8 @@
 
   Que hace:
     Pregunta de entrada, contador del tiempo juntos, cuenta regresiva al
-    proximo aniversario, linea de tiempo con fotos y canciones (con
-    visor de fotos), playlist, bitacora, mensajes privados, carta con
+    proximo aniversario, linea de tiempo (camino de puntos que abren
+    fotos y canciones), galeria con visor de fotos, playlist, bitacora, mensajes privados, carta con
     clave y cierre. El dia del aniversario la entrada parte con una
     explosion.
 
@@ -18,7 +18,7 @@
     en el PC con ?fecha=AAAA-MM-DD al final (ver "VISTA PREVIA" abajo).
 
   Que necesita:
-    - fotos/hitos/ con las fotos de la linea de tiempo
+    - fotos/ con las fotos de la galeria; fotos/hitos/ las de la linea de tiempo
     - musica/cancion.mp3 para el boton de musica; musica/hitos/ las
       canciones de la linea de tiempo (opcionales)
     - img/vista-previa.png, la imagen que aparece al mandar el link
@@ -441,226 +441,245 @@ activarFechaSimulada();
 
   @keyframes cursor { 50% { opacity: 0; } }
 
-  /* ---------- Linea de tiempo ---------- */
-  .trayectoria {
-    position: relative;
-    max-width: 720px;
+  /* ---------- Galeria ---------- */
+  .galeria {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.4rem;
+    max-width: 1020px;
     margin: 0 auto;
-    /* espacio a la izquierda para la linea punteada y los puntos */
-    padding-left: 2.4rem;
   }
 
-  /* La linea punteada vertical que une los hitos, como el trayecto
-     entre WALL-E y EVA en la portada */
-  .trayectoria::before {
-    content: "";
-    position: absolute;
-    left: 0.62rem;
-    top: 0.6rem;
-    bottom: 0.6rem;
-    border-left: 2px dashed rgba(255, 255, 255, 0.22);
-  }
-
-  .hito {
-    position: relative;
-    background: var(--panel);
+  .archivo {
+    background: var(--espacio-2);
     border: 1px solid var(--borde);
     border-radius: 14px;
-    padding: 1.3rem 1.5rem;
-    margin-bottom: 1.6rem;
-    backdrop-filter: blur(6px);
-  }
-
-  .hito:last-child { margin-bottom: 0; }
-
-  /* Punto sobre la linea; ambar (WALL-E) para los hitos del lado
-     izquierdo y cian (EVA) para los del derecho, como en la portada */
-  .hito-punto {
-    position: absolute;
-    left: -2.25rem;
-    top: 1.45rem;
-    width: 1.1rem;
-    height: 1.1rem;
-    border-radius: 50%;
-    background: var(--espacio);
-    border: 2px solid var(--cian);
-    box-shadow: 0 0 12px rgba(77, 216, 255, 0.4);
-  }
-
-  .hito.walle .hito-punto {
-    border-color: var(--ambar);
-    box-shadow: 0 0 12px rgba(217, 142, 50, 0.4);
-  }
-
-  .hito-fecha {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.68rem;
-    letter-spacing: 0.25em;
-    color: var(--cian);
-    display: block;
-    margin-bottom: 0.4rem;
-  }
-
-  .hito.walle .hito-fecha { color: var(--ambar); }
-
-  .hito h3 {
-    font-size: 1.15rem;
-    font-weight: 600;
-  }
-
-  .hito p {
-    margin-top: 0.5rem;
-    line-height: 1.75;
-    color: var(--texto-suave);
-  }
-
-  /* La miniatura respeta la forma de cada foto (vertical u horizontal);
-     solo las muy altas se recortan, dejando a la vista la parte de
-     arriba, que es donde suelen estar las caras */
-  .hito-foto {
-    display: block;
-    margin-top: 0.9rem;
-    width: min(240px, 100%);
-    border: 1px solid var(--borde);
-    border-radius: 10px;
     overflow: hidden;
-    padding: 0;
-    background: var(--espacio-2);
-    cursor: zoom-in;
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
   }
 
-  .hito-foto img {
-    width: 100%;
-    height: auto;
-    max-height: 340px;
-    object-fit: cover;
-    object-position: center 30%;
-    display: block;
+  .archivo:hover {
+    transform: translateY(-6px);
+    border-color: rgba(217, 142, 50, 0.5);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
   }
 
-  /* Zigzag en pantallas anchas: la linea va al centro y los hitos se
-     alternan a la izquierda y a la derecha. Cada hito ocupa dos filas
-     de la grilla y el siguiente empieza en la segunda, asi cada uno
-     arranca a la mitad del anterior y la seccion queda en la mitad de
-     alto. --fila la pone el script (1 para el primer hito, 2 para el
-     segundo...). En el celular sigue siendo una sola columna. */
-  @media (min-width: 900px) {
-    .trayectoria {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      column-gap: 4.4rem;
-      row-gap: 1.6rem;
-      max-width: 1040px;
-      padding-left: 0;
-    }
-
-    .trayectoria::before {
-      left: 50%;
-      margin-left: -1px;
-    }
-
-    .trayectoria .hito {
-      margin-bottom: 0;
-      grid-row: var(--fila) / span 2;
-      align-self: start;
-    }
-
-    .trayectoria .hito.lado-izquierdo { grid-column: 1; }
-    .trayectoria .hito.lado-derecho { grid-column: 2; }
-
-    /* El punto queda sobre la linea central: 2,2rem (medio espacio
-       entre columnas) mas la mitad del punto */
-    .hito.lado-izquierdo .hito-punto {
-      left: auto;
-      right: calc(-2.75rem - 1px);
-    }
-
-    .hito.lado-derecho .hito-punto { left: calc(-2.75rem - 1px); }
-  }
-
-  /* En pantallas anchas la foto va a la derecha del texto, para que la
-     linea de tiempo no quede tan larga; en el celular sigue debajo */
-  @media (min-width: 640px) {
-    .hito.con-foto {
-      display: grid;
-      grid-template-columns: 1fr min(240px, 42%);
-      column-gap: 1.6rem;
-      align-items: start;
-    }
-
-    /* el punto queda fuera: va sobre la linea, no dentro de la grilla */
-    .hito.con-foto > :not(.hito-foto):not(.hito-punto) { grid-column: 1; }
-
-    .hito.con-foto .hito-foto {
-      grid-column: 2;
-      grid-row: 1 / span 4;
-      width: 100%;
-      margin-top: 0;
-    }
-  }
-
-  /* Boton para escuchar la cancion de un hito. Las barritas son las
-     mismas del boton de musica y se mueven mientras suena. */
-  .hito-cancion {
+  .archivo .marco {
+    aspect-ratio: 1 / 1;
+    background: linear-gradient(135deg, #161d2e, #0e1320);
     display: flex;
     align-items: center;
-    gap: 0.7rem;
-    width: fit-content;
-    max-width: 100%;
-    margin-top: 0.9rem;
-    padding: 0.55rem 1.05rem 0.55rem 0.85rem;
-    border-radius: 999px;
-    border: 1px solid var(--borde);
-    background: var(--espacio-2);
-    color: var(--texto);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.74rem;
-    letter-spacing: 0.06em;
-    text-align: left;
-    cursor: pointer;
-    transition: border-color 0.3s, box-shadow 0.3s;
-  }
-
-  .hito-cancion:hover { border-color: rgba(77, 216, 255, 0.5); }
-  .hito.walle .hito-cancion:hover { border-color: rgba(217, 142, 50, 0.5); }
-
-  .hito-cancion .barras {
-    flex-shrink: 0;
-    transform: scale(0.75);
-  }
-
-  .hito.walle .hito-cancion .barras span { background: var(--ambar); }
-
-  .hito-cancion-estado {
-    color: var(--texto-suave);
-    letter-spacing: 0.2em;
-    flex-shrink: 0;
-  }
-
-  /* El nombre de la cancion se corta con "..." si no cabe en el celular */
-  .hito-cancion-nombre {
+    justify-content: center;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
-  .hito-cancion.sonando {
-    border-color: rgba(77, 216, 255, 0.6);
-    box-shadow: 0 0 16px rgba(77, 216, 255, 0.25);
+  .archivo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 
-  .hito.walle .hito-cancion.sonando {
-    border-color: rgba(217, 142, 50, 0.6);
-    box-shadow: 0 0 16px rgba(217, 142, 50, 0.25);
+  .sin-foto {
+    text-align: center;
+    color: var(--texto-suave);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    line-height: 1.8;
+    padding: 1rem;
   }
 
-  .hito-cancion.sonando .barras span {
-    animation: ecualizador 0.9s ease-in-out infinite;
+  .sin-foto .brote { font-size: 1.8rem; display: block; margin-bottom: 0.4rem; }
+
+  .archivo .info {
+    padding: 0.9rem 1.1rem 1.1rem;
+    border-top: 1px solid var(--borde);
   }
 
-  .hito-cancion.sonando .barras span:nth-child(2) { animation-delay: 0.15s; }
-  .hito-cancion.sonando .barras span:nth-child(3) { animation-delay: 0.3s; }
-  .hito-cancion.sonando .barras span:nth-child(4) { animation-delay: 0.45s; }
+  .archivo .codigo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    color: var(--ambar);
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+
+  .archivo .pie {
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  /* Las fotos que si cargaron se pueden abrir en grande */
+  .archivo.con-foto { cursor: zoom-in; }
+
+  /* ---------- Linea de tiempo: camino de puntos ----------
+     Cada hito es una "parada" del camino: un punto y, al lado, su fecha
+     y su titulo. Los puntos se alternan a la izquierda y a la derecha, y
+     el script dibuja encima un trazo punteado en zigzag que los une. Al
+     tocar un punto (o su texto) se abre la foto en el visor. */
+  .camino {
+    position: relative;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .camino-hint {
+    margin-top: 0.9rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.3em;
+    color: var(--texto-suave);
+  }
+
+  /* El trazo punteado que une los puntos. Es un SVG que cubre todo el
+     camino; el script calcula su forma segun donde quedaron los puntos */
+  .camino-trazo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .camino-trazo path {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.4);
+    stroke-width: 2;
+    stroke-dasharray: 2 9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    /* la misma animacion de avance del trayecto de la portada */
+    animation: avanzar 3s linear infinite;
+  }
+
+  /* Una parada: tres columnas (texto izquierdo, espacio del zigzag,
+     texto derecho). El punto va al borde izquierdo o derecho de la
+     columna del medio, y eso arma el zigzag. */
+  .parada {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 9rem 1fr;
+    align-items: center;
+    min-height: 5.4rem;
+  }
+
+  .parada-punto {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: start;
+    position: relative;
+    z-index: 1;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    border-radius: 50%;
+    background: var(--espacio);
+    border: 2px solid var(--ambar);
+    box-shadow: 0 0 14px rgba(217, 142, 50, 0.45);
+    color: var(--ambar);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .parada.derecha .parada-punto {
+    justify-self: end;
+    border-color: var(--cian);
+    box-shadow: 0 0 14px rgba(77, 216, 255, 0.45);
+    color: var(--cian);
+  }
+
+  /* Los puntos con foto tienen el centro relleno y se pueden tocar */
+  button.parada-punto { cursor: pointer; }
+
+  button.parada-punto::after {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  button.parada-punto:hover,
+  button.parada-punto:focus-visible {
+    transform: scale(1.35);
+  }
+
+  /* La ultima parada (el aniversario) va en verde, como la planta, y
+     late suavemente */
+  .parada.final .parada-punto {
+    width: 1.9rem;
+    height: 1.9rem;
+    border-color: var(--verde);
+    color: var(--verde);
+    animation: pulso 2s ease-in-out infinite;
+  }
+
+  /* Texto de la parada: va del lado de afuera del punto */
+  .parada-etiqueta {
+    grid-column: 1;
+    grid-row: 1;
+    text-align: right;
+    padding: 0.5rem 1rem 0.5rem 0;
+    /* los botones traen fondo, borde y letra propios; se igualan al resto */
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+  }
+
+  .parada.derecha .parada-etiqueta {
+    grid-column: 3;
+    text-align: left;
+    padding: 0.5rem 0 0.5rem 1rem;
+  }
+
+  button.parada-etiqueta { cursor: pointer; }
+
+  .parada-fecha {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.66rem;
+    letter-spacing: 0.22em;
+    color: var(--ambar);
+    margin-bottom: 0.25rem;
+  }
+
+  .parada.derecha .parada-fecha { color: var(--cian); }
+  .parada.final .parada-fecha { color: var(--verde); }
+
+  .parada-titulo {
+    display: block;
+    font-size: 0.98rem;
+    font-weight: 600;
+    line-height: 1.35;
+    transition: color 0.25s ease;
+  }
+
+  button.parada-etiqueta:hover .parada-titulo { color: var(--cian); }
+  .parada:not(.derecha) button.parada-etiqueta:hover .parada-titulo { color: var(--ambar); }
+
+  /* El texto solo se muestra en las paradas sin foto; las demas lo
+     muestran al abrir la foto */
+  .parada-texto {
+    display: block;
+    margin-top: 0.3rem;
+    font-size: 0.85rem;
+    line-height: 1.55;
+    color: var(--texto-suave);
+  }
+
+  /* En el celular el zigzag es mas angosto, para dejar espacio al texto */
+  @media (max-width: 600px) {
+    .parada {
+      grid-template-columns: 1fr 4.4rem 1fr;
+      min-height: 5rem;
+    }
+
+    .parada-etiqueta { padding-right: 0.7rem; }
+    .parada.derecha .parada-etiqueta { padding-left: 0.7rem; }
+
+    .parada-titulo { font-size: 0.9rem; }
+  }
 
   /* ---------- Visor de fotos (pantalla completa) ---------- */
   .visor {
@@ -1647,8 +1666,18 @@ activarFechaSimulada();
     <div class="encabezado">
       <span class="etiqueta-seccion">Bit&aacute;cora de vuelo</span>
       <h2 class="titulo-seccion">Nuestra trayectoria</h2>
+      <p class="camino-hint">TOCA UN PUNTO PARA ABRIR EL RECUERDO</p>
     </div>
-    <div class="trayectoria" id="trayectoriaLista"></div>
+    <div class="camino" id="trayectoriaLista"></div>
+  </section>
+
+  <!-- ============ GALERIA ============ -->
+  <section id="galeria" class="aparece">
+    <div class="encabezado">
+      <span class="etiqueta-seccion">Archivos recuperados</span>
+      <h2 class="titulo-seccion">Nuestros momentos</h2>
+    </div>
+    <div class="galeria" id="galeriaGrid"></div>
   </section>
 
   <!-- ============ PLAYLIST ============ -->
@@ -1794,7 +1823,7 @@ activarFechaSimulada();
 </main>
 
 <!-- Visor: muestra una foto en grande, sin recortar. Se abre al tocar
-     una foto de la linea de tiempo. -->
+     una foto de la galeria o un punto de la linea de tiempo. -->
 <div class="visor" id="visor" hidden role="dialog" aria-modal="true" aria-label="Foto en grande">
   <button class="visor-btn visor-cerrar" id="visorCerrar" type="button" aria-label="Cerrar">&times;</button>
   <button class="visor-btn visor-anterior" id="visorAnterior" type="button" aria-label="Foto anterior">&#8249;</button>
@@ -1822,6 +1851,21 @@ activarFechaSimulada();
 // 14 de noviembre de 2025 = un año el 14 de noviembre de 2026.
 const FECHA_INICIO = new Date(2025, 11 - 1, 14);
 
+// Fotos de la galeria. Guarda tus fotos en la carpeta "fotos/"
+// con estos nombres (o cambia los nombres aqui) y escribe el
+// pie de foto que quieras para cada una.
+// Opcional: agrega detalle: "..." a una foto para escribir algo mas
+// largo, que aparece solo al abrirla en grande. Ejemplo:
+//   { src: "fotos/1.jpeg", pie: "Donde todo empezo", detalle: "Ese dia..." },
+const FOTOS = [
+  { src: "fotos/1.jpeg", pie: "Donde todo empezo" },
+  { src: "fotos/2.jpeg", pie: "Nuestra primera salida" },
+  { src: "fotos/3.jpeg", pie: "Primer viaje juntos" },
+  { src: "fotos/4.jpeg", pie: "Un dia cualquiera, feliz" },
+  { src: "fotos/5.jpeg", pie: "Mi risa favorita" },
+  { src: "fotos/6.jpeg", pie: "Y los que vienen..." },
+];
+
 // Cancion de fondo. Guarda el archivo mp3 en la carpeta "musica/"
 // con este nombre (o cambia el nombre aqui). Volumen entre 0 y 1.
 const MUSICA = "musica/cancion.mp3";
@@ -1840,8 +1884,8 @@ const PISTA = "Combinación de nuestros números favoritos";
 // EDITA AQUI (6/6): el gran dia y los planes de los dias previos.
 // Antes de esta fecha la pagina muestra el plan del dia y una cuenta
 // regresiva; la linea de tiempo, la carta y el mensaje final quedan
-// bloqueados hasta ese dia (la playlist, la bitacora y los mensajes
-// siguen visibles).
+// bloqueados hasta ese dia (la galeria, la playlist, la bitacora y
+// los mensajes siguen visibles).
 const FECHA_EVENTO = new Date(2026, 11 - 1, 14);
 
 // Linea de tiempo: los momentos importantes, del mas antiguo al mas
@@ -1855,7 +1899,9 @@ const FECHA_EVENTO = new Date(2026, 11 - 1, 14);
 //   nombreCancion  lo que dice el boton, por ejemplo "La vie en rose · Édith Piaf"
 //   desde          segundo en que empieza a sonar (para partir en el coro)
 // Fotos de los hitos: carpeta fotos/hitos/. Canciones: carpeta musica/hitos/.
-// Si un archivo no existe, su foto o su boton simplemente no aparece.
+// Cada hito es un punto del camino; si tiene foto, al tocarlo se abre
+// en grande con su texto y suena su cancion. Sin foto, el punto no se
+// toca y el texto se ve al lado.
 // Un hito con fecha futura queda escondido hasta ese dia.
 // TEXTOS DE EJEMPLO: los que dicen [Ejemplo] tienen fecha inventada;
 // cambialos por los de verdad.
@@ -1972,7 +2018,7 @@ const HITOS = [
 
 // Pregunta de entrada del gran dia. Los otros dias se pregunta por
 // el dia de la semana ("¿Quieres pasar este martes conmigo?").
-const PREGUNTA_GRAN_DIA = "¿Quieres empezar nuestro segundo año conmigo?";
+const PREGUNTA_GRAN_DIA = "¿Quieres pasar este aniversario conmigo?";
 
 // Texto de la consolita verde de la entrada ese mismo dia, despues de la
 // explosion (los otros dias dice "> esperando respuesta").
@@ -2190,6 +2236,14 @@ function mostrarFotoDelVisor() {
   } else {
     visor.detalle.hidden = true;
   }
+
+  // Los recuerdos de la linea de tiempo pueden traer cancion: suena
+  // mientras se mira ese recuerdo; si no tiene, se hace silencio
+  if (foto.cancion) {
+    reproducirCancionDeHito(foto.cancion, foto.desde);
+  } else {
+    detenerCancionDeHito();
+  }
 }
 
 /**
@@ -2219,6 +2273,8 @@ function cerrarVisor() {
   // Se vacia la imagen para que no aparezca la anterior un instante
   // la proxima vez que se abra
   visor.imagen.removeAttribute("src");
+  // al cerrar se corta la cancion del recuerdo, si estaba sonando
+  detenerCancionDeHito();
   document.body.style.overflow = "";
   if (elementoAntesDelVisor) {
     elementoAntesDelVisor.focus();
@@ -2296,136 +2352,183 @@ visor.caja.addEventListener("touchstart", empezarDeslizamiento, { passive: true 
 visor.caja.addEventListener("touchend", terminarDeslizamiento);
 document.addEventListener("keydown", manejarTeclaDelVisor);
 
-// ----- Canciones de la linea de tiempo -----
+// ----- Galeria -----
 
-// Un solo reproductor para todas las canciones de los hitos: al tocar
-// otra, la anterior se corta, asi nunca suenan dos a la vez.
-const reproductorHitos = new Audio();
-reproductorHitos.volume = VOLUMEN;
-
-// Boton del hito que esta sonando ahora; null si no suena ninguno
-let botonCancionActiva = null;
+// Para cada foto de FOTOS se anota si cargo bien (true) o no (false).
+// El visor solo pasa por las que cargaron.
+const fotoCargo = [];
 
 /**
- * Cambia como se ve el boton de una cancion: con las barritas moviendose
- * y "PAUSAR" mientras suena, o quieto y "ESCUCHAR" cuando no.
+ * Abre en el visor una foto de la galeria, con todas las demas fotos
+ * disponibles para pasar con las flechas.
  *
  * Parametros:
- *   boton        el boton .hito-cancion
- *   estaSonando  true si la cancion de ese boton esta sonando
+ *   indiceElegido  posicion de la foto tocada dentro de FOTOS (desde 0)
  */
-function marcarBotonCancion(boton, estaSonando) {
-  const estado = boton.querySelector(".hito-cancion-estado");
-  if (estaSonando) {
-    boton.classList.add("sonando");
-    estado.textContent = "PAUSAR";
-  } else {
-    boton.classList.remove("sonando");
-    estado.textContent = "ESCUCHAR";
-  }
-  boton.setAttribute("aria-pressed", String(estaSonando));
-}
-
-/**
- * Detiene la cancion de hito que este sonando (si hay una) y deja su
- * boton en reposo. Tambien la llama el boton de musica de fondo.
- */
-function detenerCancionDeHito() {
-  reproductorHitos.pause();
-  if (botonCancionActiva !== null) {
-    marcarBotonCancion(botonCancionActiva, false);
-    botonCancionActiva = null;
-  }
-}
-
-/**
- * Pone o pausa la cancion de un hito. Si estaba sonando otra cosa (otra
- * cancion de hito o la musica de fondo), la corta primero.
- *
- * Parametros:
- *   boton  el boton .hito-cancion que se toco
- *   hito   objeto de HITOS con cancion y, opcional, desde (en segundos)
- */
-function alternarCancionDeHito(boton, hito) {
-  // Paso 1: si se toco la que ya suena, solo se pausa
-  if (botonCancionActiva === boton) {
-    detenerCancionDeHito();
+function abrirGaleriaEnVisor(indiceElegido) {
+  // Una foto que no existe no se puede abrir
+  if (!fotoCargo[indiceElegido]) {
     return;
   }
 
-  // Paso 2: apagar lo que este sonando
-  detenerCancionDeHito();
-  pausarMusicaDeFondo();
-
-  // Paso 3: cargar la cancion. "#t=45" al final de la ruta le dice al
-  // navegador que parta en el segundo 45 (asi se puede empezar en el coro)
-  let ruta = hito.cancion;
-  if (hito.desde) {
-    ruta = ruta + "#t=" + hito.desde;
+  // Paso 1: armar la lista solo con las fotos que cargaron, recordando
+  // en que lugar de esa lista quedo la que se toco
+  const listaDeFotos = [];
+  let posicionElegida = 0;
+  for (let i = 0; i < FOTOS.length; i++) {
+    if (!fotoCargo[i]) {
+      continue;
+    }
+    if (i === indiceElegido) {
+      posicionElegida = listaDeFotos.length;
+    }
+    let detalle = "";
+    if (FOTOS[i].detalle) {
+      detalle = FOTOS[i].detalle;
+    }
+    listaDeFotos.push({
+      src: FOTOS[i].src,
+      pie: FOTOS[i].pie,
+      detalle: detalle,
+      codigo: "ARCHIVO " + conTresCifras(i + 1) + " / " + conTresCifras(FOTOS.length),
+    });
   }
-  reproductorHitos.src = ruta;
 
-  // Paso 4: reproducir; si el navegador no deja, el boton vuelve a reposo
-  botonCancionActiva = boton;
-  marcarBotonCancion(boton, true);
-  reproductorHitos.play().catch(function () {
-    detenerCancionDeHito();
-  });
+  // Paso 2: abrir el visor en esa foto
+  abrirVisor(listaDeFotos, posicionElegida);
 }
 
-// Al terminar la cancion, el boton vuelve a reposo
-reproductorHitos.addEventListener("ended", detenerCancionDeHito);
-
 /**
- * Arma el boton de la cancion de un hito: barritas, "ESCUCHAR" y el
- * nombre de la cancion. Si el archivo no existe, el boton se quita solo.
+ * Arma la tarjeta de una foto de la galeria: la imagen recortada en
+ * cuadrado, su codigo ("ARCHIVO 001") y el pie de foto.
  *
  * Parametros:
- *   hito  objeto de HITOS con cancion y nombreCancion
+ *   foto    objeto de FOTOS, con src (ruta), pie (texto) y detalle opcional
+ *   indice  posicion de la foto en FOTOS, empezando en 0
  *
  * Retorna:
- *   el elemento <button> listo para agregar a la tarjeta del hito
+ *   el elemento <figure> listo para agregar a la galeria. Si la imagen
+ *   no existe, la tarjeta muestra un aviso y deja de abrirse.
  */
-function crearBotonCancion(hito) {
-  // Paso 1: el boton con sus tres partes
-  const boton = document.createElement("button");
-  boton.type = "button";
-  boton.className = "hito-cancion";
-  const barras = document.createElement("span");
-  barras.className = "barras";
-  for (let i = 0; i < 4; i++) {
-    barras.appendChild(document.createElement("span"));
-  }
-  const estado = document.createElement("span");
-  estado.className = "hito-cancion-estado";
-  const nombre = document.createElement("span");
-  nombre.className = "hito-cancion-nombre";
-  let textoNombre = hito.nombreCancion;
-  if (!textoNombre) {
-    textoNombre = "nuestra canción de ese día";
-  }
-  nombre.textContent = textoNombre;
-  boton.appendChild(barras);
-  boton.appendChild(estado);
-  boton.appendChild(nombre);
-  boton.setAttribute("aria-label", "Escuchar " + textoNombre);
-  marcarBotonCancion(boton, false);
+function crearTarjetaFoto(foto, indice) {
+  // Paso 1: la tarjeta y el marco cuadrado donde va la imagen
+  const tarjeta = document.createElement("figure");
+  tarjeta.className = "archivo con-foto";
+  const marco = document.createElement("div");
+  marco.className = "marco";
 
-  // Paso 2: revisar que el archivo exista. "metadata" baja solo el
-  // encabezado del mp3, no la cancion entera.
-  const prueba = new Audio();
-  prueba.preload = "metadata";
-  prueba.addEventListener("error", function () {
-    boton.remove();
-  });
-  prueba.src = hito.cancion;
+  // Paso 2: la imagen. loading="lazy" hace que el navegador la baje
+  // recien cuando se acerca a la pantalla.
+  const imagen = document.createElement("img");
+  imagen.src = foto.src;
+  imagen.alt = foto.pie;
+  imagen.loading = "lazy";
+  fotoCargo[indice] = true;
+  marco.appendChild(imagen);
 
-  // Paso 3: al tocarlo, suena o se pausa
-  boton.addEventListener("click", function () {
-    alternarCancionDeHito(boton, hito);
+  // Paso 3: si la foto no existe, aviso en vez de imagen y la tarjeta
+  // deja de comportarse como boton
+  imagen.addEventListener("error", function () {
+    fotoCargo[indice] = false;
+    tarjeta.classList.remove("con-foto");
+    tarjeta.removeAttribute("role");
+    tarjeta.removeAttribute("tabindex");
+    tarjeta.removeAttribute("aria-label");
+    marco.innerHTML = '<div class="sin-foto"><span class="brote">&#127793;</span>' +
+      "ARCHIVO NO ENCONTRADO<br>agrega <strong>" + foto.src + "</strong></div>";
   });
 
-  return boton;
+  // Paso 4: codigo y pie de foto debajo de la imagen
+  const info = document.createElement("figcaption");
+  info.className = "info";
+  const codigo = document.createElement("span");
+  codigo.className = "codigo";
+  codigo.textContent = "ARCHIVO " + conTresCifras(indice + 1);
+  const pie = document.createElement("div");
+  pie.className = "pie";
+  pie.textContent = foto.pie;
+  info.appendChild(codigo);
+  info.appendChild(pie);
+
+  // Paso 5: tocar la tarjeta, o Enter / espacio con teclado, la abre
+  // en grande. role y tabindex la hacen alcanzable con la tecla Tab.
+  tarjeta.setAttribute("role", "button");
+  tarjeta.tabIndex = 0;
+  tarjeta.setAttribute("aria-label", "Ver en grande: " + foto.pie);
+  tarjeta.addEventListener("click", function () {
+    abrirGaleriaEnVisor(indice);
+  });
+  tarjeta.addEventListener("keydown", function (evento) {
+    if (esTeclaDeActivar(evento)) {
+      evento.preventDefault();
+      abrirGaleriaEnVisor(indice);
+    }
+  });
+
+  tarjeta.appendChild(marco);
+  tarjeta.appendChild(info);
+  return tarjeta;
+}
+
+// Se arma una tarjeta por cada foto de FOTOS
+const grillaGaleria = document.getElementById("galeriaGrid");
+for (let i = 0; i < FOTOS.length; i++) {
+  grillaGaleria.appendChild(crearTarjetaFoto(FOTOS[i], i));
+}
+
+// ----- Canciones de la linea de tiempo -----
+
+// Un solo reproductor para las canciones de los hitos. Suena la cancion
+// del recuerdo que esta abierto en el visor; al pasar a un recuerdo sin
+// cancion o al cerrar el visor, se corta. Asi nunca suenan dos a la vez.
+const reproductorHitos = new Audio();
+reproductorHitos.volume = VOLUMEN;
+
+// Ruta de la cancion que esta sonando ahora ("" si no suena ninguna).
+// Sirve para no reiniciarla si dos recuerdos seguidos tienen la misma.
+let cancionSonando = "";
+
+/**
+ * Detiene la cancion de hito que este sonando, si hay una. La usan el
+ * visor (al cerrarse o al pasar a un recuerdo sin cancion) y el boton
+ * de musica de fondo.
+ */
+function detenerCancionDeHito() {
+  reproductorHitos.pause();
+  cancionSonando = "";
+}
+
+/**
+ * Hace sonar la cancion de un recuerdo desde el segundo indicado. Si ya
+ * estaba sonando esa misma cancion, la deja seguir.
+ *
+ * Parametros:
+ *   ruta   ruta del mp3, por ejemplo "musica/hitos/2025-11-14.mp3"
+ *   desde  segundo en que parte (0 o vacio = desde el principio)
+ */
+function reproducirCancionDeHito(ruta, desde) {
+  // Paso 1: si ya suena esta misma, no se reinicia
+  if (cancionSonando === ruta && !reproductorHitos.paused) {
+    return;
+  }
+
+  // Paso 2: cortar la musica de fondo para que no suenen dos a la vez
+  pausarMusicaDeFondo();
+
+  // Paso 3: "#t=45" al final de la ruta le dice al navegador que parta
+  // en el segundo 45 (asi se puede empezar directo en el coro)
+  let rutaConInicio = ruta;
+  if (desde) {
+    rutaConInicio = ruta + "#t=" + desde;
+  }
+  reproductorHitos.src = rutaConInicio;
+  cancionSonando = ruta;
+
+  // Paso 4: reproducir; si el archivo no existe o el navegador no deja,
+  // simplemente no suena
+  reproductorHitos.play().catch(function () {
+    cancionSonando = "";
+  });
 }
 
 // ----- Linea de tiempo -----
@@ -2433,6 +2536,11 @@ function crearBotonCancion(hito) {
 // Abreviaturas de los meses para las fechas de los hitos ("14 NOV 2025")
 const MESES_CORTOS = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN",
                       "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
+
+// Recuerdos con foto, en el orden del camino, tal como los recibe el
+// visor (src, pie, detalle, codigo y, si tiene, cancion). Lo llena
+// mostrarTrayectoria().
+let recuerdosDelCamino = [];
 
 /**
  * Convierte una fecha "AAAA-MM-DD" al formato de los hitos: "14 NOV 2025".
@@ -2468,91 +2576,161 @@ function compararHitosPorFecha(hitoA, hitoB) {
 }
 
 /**
- * Arma la tarjeta de un hito: punto sobre la linea, fecha, titulo,
- * texto, foto y cancion (estos tres ultimos solo si tiene).
+ * Convierte un hito en un recuerdo para el visor.
  *
  * Parametros:
- *   hito    objeto de HITOS (fecha, titulo, texto, foto, cancion)
- *   indice  posicion del hito en la linea, desde 0; los pares van a
- *           la izquierda en ambar (WALL-E) y los impares a la derecha
- *           en cian (EVA)
+ *   hito  objeto de HITOS que tiene foto
  *
  * Retorna:
- *   el elemento <article> listo para agregar a la linea de tiempo
+ *   objeto con src, pie, detalle, codigo, cancion, nombreCancion y desde
  */
-function crearHito(hito, indice) {
-  // Paso 1: la tarjeta, con su lado y su color. Los pares van a la
-  // izquierda en ambar (WALL-E) y los impares a la derecha en cian
-  // (EVA), como en la portada. --fila ubica el hito en el zigzag.
-  const tarjeta = document.createElement("article");
-  tarjeta.className = "hito";
-  if (indice % 2 === 0) {
-    tarjeta.classList.add("walle");
-    tarjeta.classList.add("lado-izquierdo");
-  } else {
-    tarjeta.classList.add("lado-derecho");
+function crearRecuerdoParaVisor(hito) {
+  let codigo = "REGISTRO · " + formatearFechaHito(hito.fecha);
+  if (hito.cancion && hito.nombreCancion) {
+    // U+266A es la nota musical; se escribe asi para no depender de emojis
+    codigo = codigo + "  ·  ♪ " + hito.nombreCancion;
   }
-  tarjeta.style.setProperty("--fila", String(indice + 1));
-
-  // Paso 2: el punto sobre la linea punteada, la fecha y el titulo
-  const punto = document.createElement("span");
-  punto.className = "hito-punto";
-  const fecha = document.createElement("span");
-  fecha.className = "hito-fecha";
-  fecha.textContent = formatearFechaHito(hito.fecha);
-  const titulo = document.createElement("h3");
-  titulo.textContent = hito.titulo;
-  tarjeta.appendChild(punto);
-  tarjeta.appendChild(fecha);
-  tarjeta.appendChild(titulo);
-
-  // Paso 3: el texto, si tiene
-  if (hito.texto) {
-    const texto = document.createElement("p");
-    texto.textContent = hito.texto;
-    tarjeta.appendChild(texto);
-  }
-
-  // Paso 4: la foto, si tiene. Es un boton que la abre en el visor;
-  // si el archivo no existe, el boton desaparece sin dejar hueco.
-  if (hito.foto) {
-    // con-foto activa el diseño de foto al lado del texto en el PC
-    tarjeta.classList.add("con-foto");
-    const botonFoto = document.createElement("button");
-    botonFoto.className = "hito-foto";
-    botonFoto.type = "button";
-    botonFoto.setAttribute("aria-label", "Ver en grande: " + hito.titulo);
-    const imagen = document.createElement("img");
-    imagen.src = hito.foto;
-    imagen.alt = hito.titulo;
-    imagen.loading = "lazy";
-    imagen.addEventListener("error", function () {
-      botonFoto.remove();
-      tarjeta.classList.remove("con-foto");
-    });
-    botonFoto.addEventListener("click", function () {
-      abrirVisor([{
-        src: hito.foto,
-        pie: hito.titulo,
-        detalle: hito.texto,
-        codigo: "REGISTRO · " + formatearFechaHito(hito.fecha),
-      }], 0);
-    });
-    botonFoto.appendChild(imagen);
-    tarjeta.appendChild(botonFoto);
-  }
-
-  // Paso 5: la cancion, si tiene
-  if (hito.cancion) {
-    tarjeta.appendChild(crearBotonCancion(hito));
-  }
-
-  return tarjeta;
+  return {
+    src: hito.foto,
+    pie: hito.titulo,
+    detalle: hito.texto,
+    codigo: codigo,
+    cancion: hito.cancion,
+    desde: hito.desde,
+  };
 }
 
 /**
- * Dibuja la linea de tiempo con los hitos cuya fecha ya llego, del mas
- * antiguo al mas nuevo. Si todavia no hay ninguno, la seccion se quita.
+ * Abre en el visor el recuerdo elegido, con todos los demas del camino
+ * disponibles para pasar con las flechas o deslizando.
+ *
+ * Parametros:
+ *   posicion  lugar del recuerdo dentro de recuerdosDelCamino (desde 0)
+ */
+function abrirRecuerdo(posicion) {
+  abrirVisor(recuerdosDelCamino, posicion);
+}
+
+/**
+ * Arma una parada del camino: el punto y, al lado, la fecha y el titulo
+ * (y el texto, si el hito no tiene foto).
+ *
+ * Parametros:
+ *   hito            objeto de HITOS
+ *   indice          posicion del hito en el camino, desde 0; los pares
+ *                   van a la izquierda en ambar (WALL-E) y los impares a
+ *                   la derecha en cian (EVA), como en la portada
+ *   esLaUltima      true para la ultima parada, que va en verde
+ *   posicionVisor   lugar del hito en recuerdosDelCamino, o -1 si no
+ *                   tiene foto (entonces el punto no se puede tocar)
+ *
+ * Retorna:
+ *   el elemento <div class="parada"> listo para agregar al camino
+ */
+function crearParada(hito, indice, esLaUltima, posicionVisor) {
+  // Paso 1: la parada, con su lado
+  const parada = document.createElement("div");
+  parada.className = "parada";
+  if (indice % 2 === 1) {
+    parada.classList.add("derecha");
+  }
+  if (esLaUltima) {
+    parada.classList.add("final");
+  }
+  const tieneFoto = posicionVisor >= 0;
+
+  // Paso 2: el punto. Con foto es un boton; sin foto, solo un adorno.
+  let punto;
+  if (tieneFoto) {
+    punto = document.createElement("button");
+    punto.type = "button";
+    punto.setAttribute("aria-label", "Ver recuerdo: " + hito.titulo + ", " + formatearFechaHito(hito.fecha));
+  } else {
+    punto = document.createElement("span");
+  }
+  punto.className = "parada-punto";
+
+  // Paso 3: la etiqueta con fecha y titulo. Con foto tambien abre el
+  // recuerdo al tocarla, pero queda fuera del orden de la tecla Tab
+  // (tabIndex -1) porque el punto ya cumple esa funcion.
+  let etiqueta;
+  if (tieneFoto) {
+    etiqueta = document.createElement("button");
+    etiqueta.type = "button";
+    etiqueta.tabIndex = -1;
+    etiqueta.setAttribute("aria-hidden", "true");
+  } else {
+    etiqueta = document.createElement("div");
+  }
+  etiqueta.className = "parada-etiqueta";
+  const fecha = document.createElement("span");
+  fecha.className = "parada-fecha";
+  fecha.textContent = formatearFechaHito(hito.fecha);
+  const titulo = document.createElement("span");
+  titulo.className = "parada-titulo";
+  titulo.textContent = hito.titulo;
+  etiqueta.appendChild(fecha);
+  etiqueta.appendChild(titulo);
+
+  // Paso 4: sin foto, el texto va aqui mismo (no hay visor que lo muestre)
+  if (!tieneFoto && hito.texto) {
+    const texto = document.createElement("span");
+    texto.className = "parada-texto";
+    texto.textContent = hito.texto;
+    etiqueta.appendChild(texto);
+  }
+
+  // Paso 5: tocar el punto o la etiqueta abre el recuerdo
+  if (tieneFoto) {
+    punto.addEventListener("click", function () { abrirRecuerdo(posicionVisor); });
+    etiqueta.addEventListener("click", function () { abrirRecuerdo(posicionVisor); });
+  }
+
+  parada.appendChild(punto);
+  parada.appendChild(etiqueta);
+  return parada;
+}
+
+/**
+ * Dibuja el trazo punteado en zigzag que une los puntos del camino. Se
+ * calcula con la posicion real de cada punto en pantalla, asi que hay
+ * que volver a llamarla cuando cambia el tamaño del camino.
+ */
+function dibujarCamino() {
+  // Paso 1: el camino y su tamaño; si esta escondido no hay nada que dibujar
+  const camino = document.getElementById("trayectoriaLista");
+  const svg = camino.querySelector(".camino-trazo");
+  const trazo = svg.querySelector("path");
+  const cajaCamino = camino.getBoundingClientRect();
+  if (cajaCamino.width === 0) {
+    return;
+  }
+  svg.setAttribute("width", String(cajaCamino.width));
+  svg.setAttribute("height", String(cajaCamino.height));
+
+  // Paso 2: el centro de cada punto, medido desde la esquina del camino.
+  // Se usa offsetLeft/offsetTop porque no cambian con la animacion de
+  // agrandarse al pasar el mouse (getBoundingClientRect si cambia).
+  const puntos = camino.querySelectorAll(".parada-punto");
+  let recorrido = "";
+  for (let i = 0; i < puntos.length; i++) {
+    const punto = puntos[i];
+    const parada = punto.parentElement;
+    const centroX_px = parada.offsetLeft + punto.offsetLeft + punto.offsetWidth / 2;
+    const centroY_px = parada.offsetTop + punto.offsetTop + punto.offsetHeight / 2;
+    // "M" mueve el lapiz al primer punto; "L" traza una recta al siguiente
+    let orden = " L ";
+    if (i === 0) {
+      orden = "M ";
+    }
+    recorrido = recorrido + orden + centroX_px.toFixed(1) + " " + centroY_px.toFixed(1);
+  }
+  trazo.setAttribute("d", recorrido);
+}
+
+/**
+ * Arma el camino con los hitos cuya fecha ya llego, del mas antiguo al
+ * mas nuevo. Si todavia no hay ninguno, la seccion se quita.
  */
 function mostrarTrayectoria() {
   // Paso 1: quedarse con los hitos de hoy o antes (los futuros esperan)
@@ -2570,11 +2748,47 @@ function mostrarTrayectoria() {
     return;
   }
 
-  // Paso 3: ordenarlos por fecha y dibujarlos
+  // Paso 3: ordenarlos y armar la lista de recuerdos con foto para el visor
   hitosPublicados.sort(compararHitosPorFecha);
-  const lista = document.getElementById("trayectoriaLista");
+  recuerdosDelCamino = [];
+  const posicionesEnVisor = [];
   for (let i = 0; i < hitosPublicados.length; i++) {
-    lista.appendChild(crearHito(hitosPublicados[i], i));
+    if (hitosPublicados[i].foto) {
+      posicionesEnVisor.push(recuerdosDelCamino.length);
+      recuerdosDelCamino.push(crearRecuerdoParaVisor(hitosPublicados[i]));
+    } else {
+      posicionesEnVisor.push(-1);
+    }
+  }
+
+  // Paso 4: el SVG del trazo (va primero, para quedar detras de los puntos).
+  // Los SVG se crean con createElementNS porque no son HTML comun.
+  const camino = document.getElementById("trayectoriaLista");
+  const ESPACIO_SVG = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(ESPACIO_SVG, "svg");
+  svg.setAttribute("class", "camino-trazo");
+  svg.setAttribute("aria-hidden", "true");
+  svg.appendChild(document.createElementNS(ESPACIO_SVG, "path"));
+  camino.appendChild(svg);
+
+  // Paso 5: una parada por hito
+  for (let i = 0; i < hitosPublicados.length; i++) {
+    const esLaUltima = i === hitosPublicados.length - 1;
+    camino.appendChild(crearParada(hitosPublicados[i], i, esLaUltima, posicionesEnVisor[i]));
+  }
+
+  // Paso 6: dibujar el trazo ahora y cada vez que cambie el tamaño del
+  // camino o de cualquier parada (al girar el celular, al cargar la
+  // letra, al aparecer la seccion despues de los dias previos). Se
+  // vigila cada parada porque una puede crecer y otra achicarse sin que
+  // cambie el alto total. ResizeObserver es una herramienta del
+  // navegador que avisa cuando un elemento cambia de tamaño.
+  dibujarCamino();
+  const observadorDeTamanio = new ResizeObserver(dibujarCamino);
+  observadorDeTamanio.observe(camino);
+  const paradas = camino.querySelectorAll(".parada");
+  for (let i = 0; i < paradas.length; i++) {
+    observadorDeTamanio.observe(paradas[i]);
   }
 }
 mostrarTrayectoria();
