@@ -158,6 +158,18 @@ function activarFechaSimulada() {
 }
 activarFechaSimulada();
 </script>
+<script>
+// La pregunta de entrada parte invisible mientras carga la pagina. Al
+// final del script principal se decide si va con explosion (el gran
+// dia, y entonces sigue escondida) o si aparece de una. Sin esto, el
+// dia del aniversario la pregunta alcanzaba a asomarse medio segundo
+// antes de la explosion. Por si el script fallara, igual aparece a
+// los 4 segundos (4000 milisegundos).
+document.documentElement.classList.add("cargando");
+setTimeout(function () {
+  document.documentElement.classList.remove("cargando");
+}, 4000);
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -1160,6 +1172,10 @@ activarFechaSimulada();
     opacity: 0;
     transform: scale(0.9);
   }
+
+  /* Mientras carga la pagina la pregunta tampoco se ve (la clase
+     "cargando" la pone un script chico en el <head>) */
+  .cargando .intro > :not(.intro-cielo) { opacity: 0; }
 
   /* ---------- Boton de musica ---------- */
   .btn-musica {
@@ -3637,6 +3653,9 @@ document.querySelector(".intro-pregunta").textContent =
 if (esElDiaExacto) {
   prepararEntradaDelGranDia();
 }
+// Ya se decidio como parte la entrada: la pregunta puede aparecer (el
+// gran dia sigue escondida hasta que termine la explosion)
+document.documentElement.classList.remove("cargando");
 
 if (esGranDia) {
   // El gran dia: se muestra todo y la seccion de dias previos desaparece
