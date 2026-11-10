@@ -52,7 +52,12 @@
      Para ver la pagina como se vera un dia cualquiera, abrela desde el PC
      agregando ?fecha=AAAA-MM-DD al final de la direccion, por ejemplo:
        index.html?fecha=2026-11-14
-       index.html?fecha=2026-11-13&hora=23:59   (para ver el cambio de dia)
+       index.html?fecha=2026-11-13&hora=23:59   (para ver el cambio de dia:
+                                                al llegar a las 00:00 la pagina
+                                                se recarga sola y ya es el 14)
+     Tambien funciona en el celular, conectado al mismo wifi que el PC:
+     en la carpeta ejecutar  python -m http.server 8766 --bind 0.0.0.0
+     y abrir en el celular  http://<direccion del PC>:8766/index.html?fecha=...
        index.html?fecha=2026-11-14&captura=1    (sin la pantalla de entrada,
                                                 para capturas de la pagina)
      En la pagina publicada (almendrito.github.io) esto no hace nada, asi
@@ -68,10 +73,14 @@
  * avisa en la consola y la pagina usa la fecha real.
  */
 function activarFechaSimulada() {
-  // Paso 1: solo en el PC, nunca en la pagina publicada
+  // Paso 1: solo en el PC o en la red de la casa, nunca en la pagina
+  // publicada. Las direcciones que empiezan con 192.168. o con 10. son
+  // las que reparte el router del wifi; sirven para abrir la vista
+  // previa en el celular mientras el PC hace de servidor.
   const esArchivoLocal = location.protocol === "file:";
   const esServidorLocal = location.hostname === "localhost" || location.hostname === "127.0.0.1";
-  if (!esArchivoLocal && !esServidorLocal) {
+  const esRedDeLaCasa = location.hostname.indexOf("192.168.") === 0 || location.hostname.indexOf("10.") === 0;
+  if (!esArchivoLocal && !esServidorLocal && !esRedDeLaCasa) {
     return;
   }
 
@@ -105,7 +114,26 @@ function activarFechaSimulada() {
   }
 
   // Paso 3: cuanto hay que adelantar (o atrasar) el reloj, en milisegundos
-  const desfaseMs = fechaSimulada.getTime() - ahoraReal.getTime();
+  let desfaseMs = fechaSimulada.getTime() - ahoraReal.getTime();
+
+  // Paso 3b: si la pagina se recarga sola (pasa a medianoche, al
+  // terminar la cuenta regresiva), el reloj simulado tiene que seguir
+  // donde iba y no volver a la hora de la direccion. Por eso el desfase
+  // se guarda en sessionStorage, que dura mientras la pestaña este
+  // abierta, junto con la direccion a la que corresponde. Para empezar
+  // de nuevo desde la hora de la direccion, abrirla en otra pestaña.
+  const CLAVE_DESFASE = "vista-previa-desfase";
+  try {
+    const guardado = JSON.parse(sessionStorage.getItem(CLAVE_DESFASE));
+    if (guardado && guardado.busqueda === location.search) {
+      desfaseMs = guardado.desfaseMs;
+    } else {
+      sessionStorage.setItem(CLAVE_DESFASE, JSON.stringify({ busqueda: location.search, desfaseMs: desfaseMs }));
+    }
+  } catch (error) {
+    // sin sessionStorage (modo privado estricto) la vista previa
+    // funciona igual, solo que no recuerda la hora al recargar
+  }
 
   // Paso 4: reemplazar el reloj del navegador por uno desplazado.
   // NOTA (herramienta avanzada): "class ... extends Date" crea una version
@@ -141,7 +169,9 @@ function activarFechaSimulada() {
       // la portada mide una pantalla de alto; en una captura muy alta
       // quedaria gigante, asi que se deja con su alto natural
       ".hero { min-height: 0 !important; }" +
-      ".btn-musica { display: none !important; }";
+      ".btn-musica { display: none !important; }" +
+      // sin pantalla de entrada, la explosion del gran dia taparia la captura
+      ".destello, .onda-choque, .chispa { display: none !important; }";
     document.head.appendChild(estiloCaptura);
     return;
   }
@@ -602,6 +632,15 @@ setTimeout(function () {
 
   /* Los puntos con foto tienen el centro relleno y se pueden tocar */
   button.parada-punto { cursor: pointer; }
+
+  /* Zona invisible alrededor del punto para que sea facil de tocar con
+     el dedo: el punto mide 24 px y con esto la zona llega a 48 px */
+  button.parada-punto::before {
+    content: "";
+    position: absolute;
+    inset: -12px;
+    border-radius: 50%;
+  }
 
   button.parada-punto::after {
     content: "";
@@ -1646,6 +1685,8 @@ setTimeout(function () {
       <h2 class="titulo-seccion">Tiempo juntos</h2>
     </div>
     <div class="contador">
+      <!-- La casilla de los años aparece sola al cumplir el primero -->
+      <div class="unidad" id="cUnidadAnios" hidden><div class="numero" id="cAnios">0</div><div class="etiqueta" id="cEtiquetaAnios">A&ntilde;os</div></div>
       <div class="unidad"><div class="numero" id="cMeses">0</div><div class="etiqueta">Meses</div></div>
       <div class="unidad"><div class="numero" id="cDias">0</div><div class="etiqueta">D&iacute;as</div></div>
       <div class="unidad"><div class="numero" id="cHoras">0</div><div class="etiqueta">Horas</div></div>
@@ -2124,7 +2165,25 @@ function actualizarContador() {
   const min = Math.floor(dif / 60000) % 60;
   const seg = Math.floor(dif / 1000) % 60;
 
-  document.getElementById("cMeses").textContent = meses;
+  // Desde el primer año el contador muestra años y los meses que sobran
+  // ("1 año, 0 meses" en vez de "12 meses"); antes, solo meses
+  const MESES_POR_ANIO = 12;
+  const anios = Math.floor(meses / MESES_POR_ANIO);
+  const mesesSobrantes = meses % MESES_POR_ANIO;
+  const unidadAnios = document.getElementById("cUnidadAnios");
+  if (anios >= 1) {
+    unidadAnios.hidden = false;
+    document.getElementById("cAnios").textContent = anios;
+    if (anios === 1) {
+      document.getElementById("cEtiquetaAnios").textContent = "Año";
+    } else {
+      document.getElementById("cEtiquetaAnios").textContent = "Años";
+    }
+    document.getElementById("cMeses").textContent = mesesSobrantes;
+  } else {
+    unidadAnios.hidden = true;
+    document.getElementById("cMeses").textContent = meses;
+  }
   document.getElementById("cDias").textContent = dias;
   document.getElementById("cHoras").textContent = horas;
   document.getElementById("cMin").textContent = min;
