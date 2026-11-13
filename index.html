@@ -1527,6 +1527,31 @@ setTimeout(function () {
     margin-top: 1.8rem;
   }
 
+  /* Cita de una cancion dentro de la carta. pre-line respeta los
+     saltos de linea tal como se pegan los versos. Mientras este vacia
+     (solo con el comentario de instrucciones) no se muestra. */
+  .carta-cita {
+    margin: 0.2rem 0 1.4rem;
+    padding: 0.6rem 0 0.6rem 1.2rem;
+    border-left: 2px solid var(--ambar);
+    color: var(--texto-suave);
+    font-style: italic;
+    line-height: 1.85;
+    white-space: pre-line;
+  }
+
+  .carta-cita:empty { display: none; }
+
+  .carta-cita-autor {
+    display: block;
+    margin-top: 0.5rem;
+    font-style: normal;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    color: var(--ambar);
+  }
+
   /* ---------- Dias previos ---------- */
   .previa-zona {
     display: flex;
@@ -1843,21 +1868,51 @@ setTimeout(function () {
         <p class="carta-cabecera">DE: MATEO &middot; PARA: AYLEEN &middot; 14.11.2026</p>
         <!-- EDITA AQUI (5/6): la carta del primer año. Cada <p> es un
              parrafo; copia mas lineas <p>...</p> si necesitas mas.
-             TEXTO DE EJEMPLO: reemplazalo antes del 14 de noviembre.
              La carta de los 7 meses quedo guardada en la bitacora. -->
-        <p>Ayleen:</p>
+        <p>Estimada Ayleen:</p>
         <p>
-          [Ejemplo] Hoy cumplimos un año. Hace doce meses no sabía todo lo que iba a
-          aprender contigo, ni cuántas recetas, series y tonteras íbamos a acumular.
+          Por medio de esta carta quiero recopilar y expresar lo que hemos vivido; ya ha
+          pasado bastante desde que todo empezó. Hace más de un año decidí que un 14 de
+          noviembre te pediría que fueras mi polola. Las razones en ese entonces eran lo
+          fácil que había sido compatibilizar y que me gustaras solo siendo tú, y viceversa.
+          Lo planeé todo para que no supieras que ese sería el día, aunque la pista esencial
+          era que saldríamos un viernes 14 (tu número favorito) de noviembre. Llevamos un año
+          tratando siempre de incorporar al otro en nuestra vida.
         </p>
         <p>
-          [Ejemplo] Escribe aquí lo que más te marcó de este año: un momento, un viaje,
-          algo que ella hizo por ti o algo que aprendieron juntos.
+          Hemos vivido demasiadas cosas siendo primerizos. Curiosamente, contigo aprendí lo
+          bonito que es el español, en el que podemos diferenciar el querer del amar. En este
+          año hemos amado, no me cabe duda, y hemos vivido en carne propia la irracionalidad y
+          la pasión del amor. Esta sensación siempre me trae a la mente la canción
+          «El amar y el querer», de José José.
+        </p>
+        <!-- CITA DE LA CANCION: pega los versos dentro del blockquote, entre
+             > y <, cada verso en su propia linea, y al final el autor asi:
+               <span class="carta-cita-autor">José José</span>
+             Mientras el blockquote este vacio, no se ve en la pagina. -->
+        <blockquote class="carta-cita"></blockquote>
+        <p>
+          En el proceso de amar, nos dimos el tiempo de conocer la parte más vulnerable del
+          otro, esa que escondíamos al inicio, y ganamos una mayor capacidad de entendernos a
+          nosotros mismos para poder expresarle al otro lo que necesitábamos. Después de varios
+          intentos, noto el resultado de amar. Espero que no se malinterpreten mis palabras:
+          estoy totalmente satisfecho con lo conseguido, amor.
         </p>
         <p>
-          [Ejemplo] Y cierra con lo que quieres para el año que viene.
+          Además, antes de llegar a esta carta pasaste por una pequeña ruta donde recopilé
+          momentos increíbles que vivimos juntos y que muestran cómo cada uno ha impulsado al
+          otro a sacar su mejor versión. Hablando por mí, es una locura cuánto me motivas a
+          levantarme y superarme todos los días. Más de una vez te habré dicho que, en mis
+          momentos de mayor estrés, eres tú la que se me viene a la mente para no rendirme;
+          por eso siempre espero generar lo mismo en ti. A veces es bueno escribir y hacer
+          estos detalles para valorar lo que tenemos.
         </p>
-        <p class="carta-firma">&mdash; Mateo</p>
+        <p>
+          Quiero que sigamos creciendo juntos un año más y todos los que se nos vengan:
+          superándonos siempre, siendo compañeros en este crecimiento personal y amándonos.
+        </p>
+        <p>TeAmo, Ayleen.</p>
+        <p class="carta-firma">Atte. Mateo Yáñez Verdugo</p>
       </article>
 
     </div>
