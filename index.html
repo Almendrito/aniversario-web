@@ -73,14 +73,20 @@
  * avisa en la consola y la pagina usa la fecha real.
  */
 function activarFechaSimulada() {
-  // Paso 1: solo en el PC o en la red de la casa, nunca en la pagina
-  // publicada. Las direcciones que empiezan con 192.168. o con 10. son
-  // las que reparte el router del wifi; sirven para abrir la vista
-  // previa en el celular mientras el PC hace de servidor.
+  // Paso 1: solo en el PC o en una red privada, nunca en la pagina
+  // publicada. Las direcciones privadas son las que reparte un router o
+  // el punto de acceso de un celular: 192.168.x.x, 10.x.x.x y de
+  // 172.16.x.x a 172.31.x.x (el iPhone usa 172.20.10.x). Sirven para
+  // abrir la vista previa en el celular mientras el PC hace de servidor.
   const esArchivoLocal = location.protocol === "file:";
   const esServidorLocal = location.hostname === "localhost" || location.hostname === "127.0.0.1";
-  const esRedDeLaCasa = location.hostname.indexOf("192.168.") === 0 || location.hostname.indexOf("10.") === 0;
-  if (!esArchivoLocal && !esServidorLocal && !esRedDeLaCasa) {
+  const partesDireccion = location.hostname.split(".");
+  const segundoNumero = Number(partesDireccion[1]);
+  const esRed172Privada = partesDireccion[0] === "172" && segundoNumero >= 16 && segundoNumero <= 31;
+  const esRedPrivada = location.hostname.indexOf("192.168.") === 0 ||
+                       location.hostname.indexOf("10.") === 0 ||
+                       esRed172Privada;
+  if (!esArchivoLocal && !esServidorLocal && !esRedPrivada) {
     return;
   }
 
